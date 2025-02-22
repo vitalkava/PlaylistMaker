@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search">Пошук</string>
+    <string name="library">Медыятэка</string>
+    <string name="settings">Наладкi</string>
+    <string name="night_mode">Цёмная тэма</string>
+    <string name="share">Падзяліцца дадаткам</string>
+    <string name="write_to_support">Напісаць у падтрымку</string>
+    <string name="user_agreement">Карыстальніцкая дамова</string>
+</resources>
