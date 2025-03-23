@@ -5,156 +5,85 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".SettingsActivity">
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="@dimen/height_title_block"
-        android:paddingStart="@dimen/margin_16">
+        android:paddingHorizontal="@dimen/margin_16">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|start"
-            android:text="@string/settings"
-            android:textColor="@color/content_light_mode"
-            android:textSize="@dimen/text_size_22" />
+            style="@style/ScreenTitleStyle"
+            android:text="@string/settings" />
     </FrameLayout>
 
-    <Switch
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_of_settings_button"
-        android:layout_gravity="center_vertical|start"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        style="@style/SettingsSwitchStyle"
         android:layout_marginTop="24dp"
         android:checked="false"
         android:minWidth="@dimen/height_of_settings_button"
         android:minHeight="@dimen/height_of_settings_button"
-        android:paddingStart="@dimen/margin_16"
-        android:paddingEnd="18dp"
         android:text="@string/night_mode"
-        android:textColor="@color/content_light_mode"
-        android:textSize="@dimen/text_size_16"
+        app:thumbTint="@color/switch_thumb_color"
+        app:trackTint="@color/switch_track_color"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_of_settings_button"
-        android:layout_gravity="center_vertical|start"
-        android:background="@android:color/transparent"
-        android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="start|center_vertical"
-        android:paddingStart="@dimen/margin_16"
-        android:paddingEnd="@dimen/margin_12"
+        android:id="@+id/button_share_app"
+        style="@style/SettingsButtonStyle"
         android:text="@string/share"
-        android:textAllCaps="false"
-        android:textColor="@color/content_light_mode"
-        android:textSize="@dimen/text_size_16"
-        app:icon="@drawable/share_light_mode"
-        app:iconGravity="end"
-        app:iconTint="@color/gray" />
+        app:icon="@drawable/share_icon_24dp"/>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_of_settings_button"
-        android:layout_gravity="center_vertical|start"
-        android:background="@android:color/transparent"
-        android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="start|center_vertical"
-        android:paddingStart="@dimen/margin_16"
-        android:paddingEnd="@dimen/margin_12"
+        android:id="@+id/button_write_to_support"
+        style="@style/SettingsButtonStyle"
         android:text="@string/write_to_support"
-        android:textAllCaps="false"
-        android:textColor="@color/content_light_mode"
-        android:textSize="@dimen/text_size_16"
-        app:icon="@drawable/support_light_mode"
-        app:iconGravity="end"
-        app:iconTint="@color/gray" />
+        app:icon="@drawable/support_icon_24dp"/>
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/height_of_settings_button"
-        android:layout_gravity="center_vertical|start"
-        android:background="@android:color/transparent"
-        android:backgroundTint="@color/white"
-        android:foreground="?attr/selectableItemBackground"
-        android:gravity="start|center_vertical"
-        android:paddingStart="@dimen/margin_16"
-        android:paddingEnd="@dimen/margin_12"
+        android:id="@+id/button_arrow_forward"
+        style="@style/SettingsButtonStyle"
         android:text="@string/user_agreement"
-        android:textAllCaps="false"
-        android:textColor="@color/content_light_mode"
-        android:textSize="@dimen/text_size_16"
-        app:icon="@drawable/arrow_forward"
-        app:iconGravity="end"
-        app:iconTint="@color/gray" />
+        app:icon="@drawable/arrow_forward_icon_16dp"/>
 
     <View
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <LinearLayout
-        style="?android:attr/buttonBarStyle"
+    <View
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="0.5dp"
+        android:background="@color/PM_light_gray" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
         android:orientation="horizontal">
-
-        <!--вижу, что в макете дизайнера установлена высота для этого блока равная 56,
-        однако если выставить такую высоту, текст перестает быть видимым -->
+<!--        style="android:attr/buttonBarStyle">-->
 
         <Button
+            style="@style/BottomButtonBarStyle"
             android:id="@+id/button_search_settings"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:backgroundTint="@color/white"
-            android:foreground="?attr/selectableItemBackground"
             android:text="@string/search"
-            android:textAllCaps="false"
-            android:textColor="@color/content_light_mode"
-            android:textSize="@dimen/text_size_12"
-            app:icon="@drawable/search_inactive_light_mode"
-            app:iconGravity="top"
-            app:iconTint="@color/content_light_mode"/>
+            app:icon="@drawable/search_icon_24dp"
+            app:iconGravity="top" />
 
         <Button
+            style="@style/BottomButtonBarStyle"
             android:id="@+id/button_library_settings"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:backgroundTint="@color/white"
-            android:foreground="?attr/selectableItemBackground"
             android:text="@string/library"
-            android:textAllCaps="false"
-            android:textColor="@color/content_light_mode"
-            android:textSize="@dimen/text_size_12"
-            app:icon="@drawable/library_inactive_light_mode"
-            app:iconGravity="top"
-            app:iconTint="@color/content_light_mode" />
+            app:icon="@drawable/library_icon_24dp"
+            app:iconGravity="top" />
 
         <Button
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:backgroundTint="@color/white"
-            android:foreground="?attr/selectableItemBackground"
+            style="@style/BottomButtonBarStyle"
             android:text="@string/settings"
-            android:textAllCaps="false"
-            android:textColor="@color/background_main_screen"
-            android:textSize="@dimen/text_size_12"
-            app:icon="@drawable/settings_inactive_light_mode"
+            android:textColor="@color/PM_blue"
+            app:icon="@drawable/settings_icon_24dp"
             app:iconGravity="top"
-            app:iconTint="@color/background_main_screen" />
+            app:iconTint="@color/PM_blue" />
     </LinearLayout>
 
 </LinearLayout>

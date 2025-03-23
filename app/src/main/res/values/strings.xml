@@ -7,4 +7,13 @@
     <string name="share">Share the app</string>
     <string name="write_to_support">Write to support</string>
     <string name="user_agreement">User Agreement</string>
+    <string name="shared_text_in_button_share_apk" translatable="false">https://practicum.yandex.com/referrals/?ref_code=gAAAAABnbPrwIweaLt2TqMXmAy49d1WNBIm9ODIZnS5FQl6r0Sg-BF0xyYxKFZaGHsxb5RqDTzWzGcg17SP31WC0GNpQwjvzuw%3D%3D</string>
+    <string name="title_share_screen_in_button_share_apk">Share with:</string>
+    <string name="recipient_email_in_button_write_to_support" translatable="false">vital.kava@yandex.by</string>
+    <string name="subject_in_button_write_to_support">Message to the developers of the Playlist Maker app</string>
+    <string name="message_in_button_write_to_support">Thanks to the developers for a cool app!</string>
+    <string name="url_in_button_arrow_forward" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
+    <string name="back">Back</string>
+    <string name="clear_input_field">Clear input field</string>
+
 </resources>

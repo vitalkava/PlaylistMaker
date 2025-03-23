@@ -1,19 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/button_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            app:icon="@drawable/arrow_back_icon_16dp"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/back" />
+
+        <TextView
+            style="@style/ScreenTitleStyle"
+            android:layout_marginStart="@dimen/margin_12"
+            android:text="@string/search" />
+    </LinearLayout>
 
 
-    <TextView
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:text="Someday, this screen will be able to conveniently search for music :)"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp">
+
+        <EditText
+            android:id="@+id/search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginVertical="8dp"
+            android:autofillHints="search"
+            android:background="@drawable/edit_text_search_field"
+            android:drawableStart="@drawable/search_icon_16dp"
+            android:drawablePadding="4dp"
+            android:drawableTint="?attr/colorOnSurface"
+            android:fontFamily="@font/ys_display_regular"
+            android:gravity="start|center_vertical"
+            android:hint="@string/search"
+            android:inputType="text"
+            android:lines="1"
+            android:maxLength="50"
+            android:minHeight="48dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="40dp"
+            android:textColorHint="?attr/android:textColorHint"
+            android:textColor="@color/PM_black"
+            android:textFontWeight="400"
+            android:textSize="@dimen/text_size_16"
+            android:textCursorDrawable="@drawable/cursor"/>
+
+        <ImageView
+            android:id="@+id/clear_icon"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:minHeight="48dp"
+            android:minWidth="48dp"
+            android:layout_gravity="end"
+            android:paddingEnd="28dp"
+            android:contentDescription="@string/clear_input_field"
+            android:src="@drawable/clear_icon_16dp"
+            android:visibility="gone" />
+
+    </FrameLayout>
+</LinearLayout>

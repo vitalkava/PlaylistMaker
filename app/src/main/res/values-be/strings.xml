@@ -7,4 +7,9 @@
     <string name="share">Падзяліцца дадаткам</string>
     <string name="write_to_support">Напісаць у падтрымку</string>
     <string name="user_agreement">Карыстальніцкая дамова</string>
+    <string name="title_share_screen_in_button_share_apk">Падзялiцца з дапамогай:</string>
+    <string name="subject_in_button_write_to_support">Паведамленне распрацоўнікам і распрацоўніцам дадатка Playlist Maker</string>
+    <string name="message_in_button_write_to_support">Дзякуй распрацоўшчыкам і распрацоўшчыцам за файны дадатак!</string>
+    <string name="back">Назад</string>
+    <string name="clear_input_field">Ачысціць поле ўводу</string>
 </resources>
