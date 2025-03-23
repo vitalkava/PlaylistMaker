@@ -20,21 +20,14 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        val buttonSearchSettings = findViewById<Button>(R.id.button_search_settings)
-        val buttonLibrarySettings = findViewById<Button>(R.id.button_library_settings)
+        val backButton: Button = findViewById(R.id.button_back)
+        backButton.setOnClickListener {
+            finish()
+        }
+
         val buttonShareApp = findViewById<Button>(R.id.button_share_app)
         val buttonWriteToSupport = findViewById<Button>(R.id.button_write_to_support)
         val buttonArrowForward = findViewById<Button>(R.id.button_arrow_forward)
-
-        buttonSearchSettings.setOnClickListener {
-            val searchIntent = Intent(this, SearchActivity::class.java)
-            startActivity(searchIntent)
-        }
-
-        buttonLibrarySettings.setOnClickListener {
-            val libraryIntent = Intent(this, LibraryActivity::class.java)
-            startActivity(libraryIntent)
-        }
 
         buttonShareApp.setOnClickListener {
             val sharedText = getString(R.string.shared_text_in_button_share_apk)

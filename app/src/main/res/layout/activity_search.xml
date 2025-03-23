@@ -13,14 +13,7 @@
 
         <Button
             android:id="@+id/button_back"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginBottom="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="4dp"
-            app:icon="@drawable/arrow_back_icon_16dp"
-            android:background="@android:color/transparent"
-            android:contentDescription="@string/back" />
+            style="@style/ButtonBackStyle" />
 
         <TextView
             style="@style/ScreenTitleStyle"
