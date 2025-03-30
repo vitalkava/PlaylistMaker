@@ -12,4 +12,7 @@
     <string name="message_in_button_write_to_support">Дзякуй распрацоўшчыкам і распрацоўшчыцам за файны дадатак!</string>
     <string name="back">Назад</string>
     <string name="clear_input_field">Ачысціць поле ўводу</string>
+    <string name="album_cover">Вокладка альбома</string>
+    <string name="dot_separator">Кропка-падзельнiк</string>
+    <string name="arrow_forward">Стрэка наперад</string>
 </resources>
