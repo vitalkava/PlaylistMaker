@@ -1,5 +1,7 @@
 package com.example.playlistmaker
 
+import android.content.Context
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.RoundedCorner
 import android.view.View
@@ -42,7 +44,13 @@ class SearchResultViewHolder(itemView: View): ViewHolder(itemView) {
         artistName.text = track.artistName
         songDuration.text = track.trackTime
 
-        val property = RequestOptions().transform(RoundedCorners(2))
-        Glide.with(itemView.context).load(track.artworkUrl100).placeholder(R.drawable.album_card_image).apply(property).into(albumImage)
+        Glide.with(itemView.context).load(track.artworkUrl100).placeholder(R.drawable.album_card_image).transform(RoundedCorners(dpToPx(2f, itemView.context))).into(albumImage)
+    }
+
+    private fun dpToPx(dp: Float, context: Context): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp,
+            context.resources.displayMetrics).toInt()
     }
 }
