@@ -6,6 +6,8 @@
 
         <item name="colorSecondary">@color/white</item>
 
+        <item name="colorAccent">@color/white</item>
+
         <item name="android:colorBackground">@color/PM_black</item>
         <item name="colorOnBackground">@color/white</item>
 

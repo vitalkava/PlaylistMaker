@@ -15,5 +15,8 @@
     <string name="url_in_button_arrow_forward" translatable="false">https://yandex.ru/legal/practicum_offer/</string>
     <string name="back">Back</string>
     <string name="clear_input_field">Clear input field</string>
+    <string name="album_cover">Album cover</string>
+    <string name="dot_separator">Dot separator</string>
+    <string name="arrow_forward">Arrow forward</string>
 
 </resources>
