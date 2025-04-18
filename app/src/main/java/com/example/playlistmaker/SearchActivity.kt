@@ -88,6 +88,8 @@ class SearchActivity : AppCompatActivity() {
         clearIcon.setOnClickListener {
             queryInput.setText("")
             tracks.clear()
+            noResults.visibility = View.INVISIBLE
+            noInternet.visibility = View.INVISIBLE
             adapter.updateData(tracks)
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(queryInput.windowToken, 0)
