@@ -27,10 +27,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val retrofit = Retrofit.Builder().baseUrl(iTunesBaseUrl).addConverterFactory(GsonConverterFactory.create()).build()
-    private val iTunesService = retrofit.create(iTunesApi::class.java)
-
     private lateinit var queryInput: EditText
     private lateinit var clearIcon: ImageView
     private lateinit var recyclerView: RecyclerView
@@ -91,6 +87,7 @@ class SearchActivity : AppCompatActivity() {
 
         clearIcon.setOnClickListener {
             queryInput.setText("")
+            tracks.clear()
             adapter.updateData(tracks)
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(queryInput.windowToken, 0)
@@ -147,13 +144,10 @@ class SearchActivity : AppCompatActivity() {
 
     private fun performSearch(query: String) {
         hidePlaceholders()
-        iTunesService.search(query).enqueue(object : Callback<TrackResponse> {
+        RetrofitClient.iTunesService.search(query).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
                 if (response.isSuccessful) {
                     val resultTracks = response.body()?.results ?: listOf()
-
-                    println("Full API Response: ${response.body()}")
-
                     if (resultTracks.isNotEmpty()) {
                         tracks.clear()
                         tracks.addAll(resultTracks)
