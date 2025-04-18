@@ -11,10 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import java.text.SimpleDateFormat
+import java.util.Locale
 
-class SearchAdapter(
-    private val tracks: List<Track>
-): RecyclerView.Adapter<SearchResultViewHolder> () {
+class SearchAdapter: RecyclerView.Adapter<SearchResultViewHolder> () {
+
+    private var tracks = ArrayList<Track>()
+
+    fun updateData(newTracks: List<Track>) {
+        tracks.clear()
+        tracks.addAll(newTracks)
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.search_result_view, parent, false)
@@ -37,10 +45,15 @@ class SearchResultViewHolder(itemView: View): ViewHolder(itemView) {
     private val artistName: TextView = itemView.findViewById(R.id.tvBandName)
     private val songDuration: TextView = itemView.findViewById(R.id.tvSongDuration)
 
+    private val timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
+
     fun bind(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
-        songDuration.text = track.trackTime
+
+        println("Track duration in millis: ${track.trackTimeMillis}")
+
+        songDuration.text = timeFormat.format(track.trackTimeMillis)
 
         Glide.with(itemView.context).load(track.artworkUrl100).placeholder(R.drawable.album_card_image).transform(RoundedCorners(dpToPx(2f, itemView.context))).into(albumImage)
     }

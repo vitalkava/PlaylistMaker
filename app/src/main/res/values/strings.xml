@@ -18,5 +18,10 @@
     <string name="album_cover">Album cover</string>
     <string name="dot_separator">Dot separator</string>
     <string name="arrow_forward">Arrow forward</string>
+    <string name="no_results">Sad smiley face image in music note symbol icon</string>
+    <string name="nothing_found">Nothing found</string>
+    <string name="no_internet">Connection problems\n\nDownload failed. Check your internet connection</string>
+    <string name="refresh">Refresh</string>
+    <string name="no_internet_content_description">Image of crossed out WI-FI icon in music note symbol</string>
 
 </resources>

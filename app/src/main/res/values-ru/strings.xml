@@ -15,4 +15,9 @@
     <string name="album_cover">Обложка альбома</string>
     <string name="dot_separator">Точка-разделитель</string>
     <string name="arrow_forward">Стрелка вперед</string>
+    <string name="no_results">Изображение грустного смайлика в значке символа ноты</string>
+    <string name="nothing_found">Ничего не нашлось</string>
+    <string name="no_internet">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="refresh">Обновить</string>
+    <string name="no_internet_content_description">Изображение перечеркнутого значка WI-FI в значке символа ноты</string>
 </resources>

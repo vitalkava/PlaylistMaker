@@ -4,10 +4,13 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,41 +18,25 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
-    val tracks: ArrayList<Track> = arrayListOf(
-        Track(
-            trackName = "Smells Like Teen Spirit",
-            artistName = "Nirvana",
-            trackTime = "5:01",
-            artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            trackName = "Billie Jean",
-            artistName = "Michael Jackson",
-            trackTime = "4:35",
-            artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"
-        ),
-        Track(
-            trackName = "Stayin' Alive",
-            artistName = "Bee Gees",
-            trackTime = "4:10",
-            artworkUrl100 = "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            trackName = "Whole Lotta Love",
-            artistName = "Led Zeppelin",
-            trackTime = "5:33",
-            artworkUrl100 = "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            trackName = "Sweet Child O'Mine",
-            artistName = "Guns N' Roses",
-            trackTime = "5:03",
-            artworkUrl100 = "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        )
-    )
+    private lateinit var queryInput: EditText
+    private lateinit var clearIcon: ImageView
+    private lateinit var recyclerView: RecyclerView
+
+    private lateinit var noResults: View
+    private lateinit var noInternet: View
+    private lateinit var buttonRefresh: Button
+
+    private val tracks = ArrayList<Track>()
+    private val adapter = SearchAdapter()
 
     private var editTextValue: String = DEF_VALUE
 
@@ -61,6 +48,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_QUERY, editTextValue)
+        outState.putString("TRACKS_JSON", Gson().toJson(tracks))
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -68,6 +56,11 @@ class SearchActivity : AppCompatActivity() {
         editTextValue = savedInstanceState.getString(SEARCH_QUERY, DEF_VALUE)
         val editText: EditText = findViewById(R.id.search)
         editText.setText(editTextValue)
+        val tracksJson = savedInstanceState.getString("TRACKS_JSON", "[]")
+        val restoredTracks: List<Track> = Gson().fromJson(tracksJson, Array<Track>::class.java).toList()
+        tracks.clear()
+        tracks.addAll(restoredTracks)
+        adapter.updateData(tracks)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,23 +73,37 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-        val recyclerView: RecyclerView = findViewById(R.id.search_results)
-        val adapter = SearchAdapter(tracks)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = adapter
-
         val backButton: Button = findViewById(R.id.button_back)
         backButton.setOnClickListener {
             finish()
         }
 
-        val clearIcon: ImageView = findViewById(R.id.clear_icon)
-        val editText: EditText = findViewById(R.id.search)
+        recyclerView = findViewById(R.id.search_results)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
+
+        clearIcon = findViewById(R.id.clear_icon)
+        queryInput = findViewById(R.id.search)
 
         clearIcon.setOnClickListener {
-            editText.setText("")
+            queryInput.setText("")
+            tracks.clear()
+            noResults.visibility = View.INVISIBLE
+            noInternet.visibility = View.INVISIBLE
+            adapter.updateData(tracks)
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(editText.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(queryInput.windowToken, 0)
+        }
+
+        noResults = findViewById(R.id.no_results)
+        noInternet = findViewById(R.id.no_internet)
+        buttonRefresh = findViewById(R.id.button_refresh)
+
+        buttonRefresh.setOnClickListener {
+            val query = queryInput.text.toString().trim()
+            if (query.isNotEmpty()) {
+                performSearch(query)
+            }
         }
 
         val searchTextWatcher = object : TextWatcher {
@@ -104,6 +111,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+
                 editTextValue = s.toString()
                 clearIcon.isVisible = !s.isNullOrEmpty()
 
@@ -113,8 +121,7 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 (recyclerView.adapter as SearchAdapter).apply {
-                    val filteredAdapter = SearchAdapter(filteredTracks)
-                    recyclerView.adapter = filteredAdapter
+                    adapter.updateData(filteredTracks)
                 }
             }
 
@@ -122,13 +129,50 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-        editText.addTextChangedListener(searchTextWatcher)
+        queryInput.addTextChangedListener(searchTextWatcher)
+
+        queryInput.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                val query = queryInput.text.toString().trim()
+                if (query.isNotEmpty()) {
+                    performSearch(query)
+                }
+                true
+            } else {
+                false
+            }
+        }
+    }
+
+    private fun performSearch(query: String) {
+        hidePlaceholders()
+        RetrofitClient.iTunesService.search(query).enqueue(object : Callback<TrackResponse> {
+            override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+                if (response.isSuccessful) {
+                    val resultTracks = response.body()?.results ?: listOf()
+                    if (resultTracks.isNotEmpty()) {
+                        tracks.clear()
+                        tracks.addAll(resultTracks)
+                        adapter.updateData(tracks)
+                    } else {
+                        adapter.updateData(emptyList())
+                        noResults.visibility = View.VISIBLE
+                    }
+                } else {
+                    adapter.updateData(emptyList())
+                    noResults.visibility = View.VISIBLE
+                }
+            }
+
+            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                adapter.updateData(emptyList())
+                noInternet.visibility = View.VISIBLE
+            }
+        })
+    }
+
+    private fun hidePlaceholders() {
+        noResults.visibility = View.GONE
+        noInternet.visibility = View.GONE
     }
 }
-
-data class Track(
-    val trackName: String,
-    val artistName: String,
-    val trackTime: String,
-    val artworkUrl100: String
-)

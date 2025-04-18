@@ -15,4 +15,9 @@
     <string name="album_cover">Вокладка альбома</string>
     <string name="dot_separator">Кропка-падзельнiк</string>
     <string name="arrow_forward">Стрэка наперад</string>
+    <string name="no_results">Выява сумнага смайліка ў значку сімвала ноты</string>
+    <string name="nothing_found">Нічога не знайшлося</string>
+    <string name="no_internet">Праблемы з сувяззю\n\nЗагрузка не ўдалася. Праверце падлучэнне да інтэрнэту</string>
+    <string name="refresh">Aбнавіць</string>
+    <string name="no_internet_content_description">Выява перакрэсленага значка WI-FI у значку сімвала ноты</string>
 </resources>
