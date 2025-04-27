@@ -14,7 +14,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class SearchAdapter: RecyclerView.Adapter<SearchResultViewHolder> () {
+class SearchAdapter(private val onTrackClicked: (Track) -> Unit): RecyclerView.Adapter<SearchResultViewHolder> () {
 
     private var tracks = ArrayList<Track>()
 
@@ -31,6 +31,9 @@ class SearchAdapter: RecyclerView.Adapter<SearchResultViewHolder> () {
 
     override fun onBindViewHolder(holder: SearchResultViewHolder, position: Int) {
         holder.bind(tracks[position])
+        holder.itemView.setOnClickListener {
+            onTrackClicked(tracks[position])
+        }
     }
 
     override fun getItemCount(): Int {

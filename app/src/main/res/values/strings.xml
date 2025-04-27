@@ -23,5 +23,7 @@
     <string name="no_internet">Connection problems\n\nDownload failed. Check your internet connection</string>
     <string name="refresh">Refresh</string>
     <string name="no_internet_content_description">Image of crossed out WI-FI icon in music note symbol</string>
+    <string name="search_history">You searched</string>
+    <string name="clear_history">Clear history</string>
 
 </resources>

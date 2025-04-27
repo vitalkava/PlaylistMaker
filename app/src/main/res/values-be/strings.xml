@@ -20,4 +20,6 @@
     <string name="no_internet">Праблемы з сувяззю\n\nЗагрузка не ўдалася. Праверце падлучэнне да інтэрнэту</string>
     <string name="refresh">Aбнавіць</string>
     <string name="no_internet_content_description">Выява перакрэсленага значка WI-FI у значку сімвала ноты</string>
+    <string name="search_history">Вы шукалi</string>
+    <string name="clear_history">Ачысціць гісторыю</string>
 </resources>
