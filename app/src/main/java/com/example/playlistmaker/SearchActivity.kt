@@ -133,7 +133,7 @@ class SearchActivity : AppCompatActivity() {
                 editTextValue = s.toString()
                 clearIcon.isVisible = !s.isNullOrEmpty()
 
-                searchHistoryView.visibility = if (queryInput.text.isEmpty() && queryInput.hasFocus()) View.VISIBLE else View.GONE
+                searchHistoryView.isVisible = queryInput.text.isEmpty() && queryInput.hasFocus()
 
                 val filteredTracks = tracks.filter {
                     it.trackName.contains(editTextValue, ignoreCase = true) ||
@@ -210,6 +210,6 @@ class SearchActivity : AppCompatActivity() {
     private fun showHistory() {
         val history = searchHistory.getHistory()
         historyAdapter.updateData(history)
-        searchHistoryView.visibility = if (history.isNotEmpty()) View.VISIBLE else View.GONE
+        searchHistoryView.isVisible = history.isNotEmpty()
     }
 }
