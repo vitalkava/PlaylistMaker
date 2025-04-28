@@ -210,6 +210,6 @@ class SearchActivity : AppCompatActivity() {
     private fun showHistory() {
         val history = searchHistory.getHistory()
         historyAdapter.updateData(history)
-        searchHistoryView.isVisible = history.isNotEmpty()
+        searchHistoryView.isVisible = history.isNotEmpty() && queryInput.text.isEmpty()
     }
 }
