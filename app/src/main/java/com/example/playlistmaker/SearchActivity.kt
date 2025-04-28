@@ -48,12 +48,14 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val SEARCH_QUERY = "SEARCH_QUERY"
         const val DEF_VALUE = ""
+        const val TRACKS_JSON = "TRACKS_JSON"
+        const val EMPTY_JSON_ARRAY = "[]"
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_QUERY, editTextValue)
-        outState.putString("TRACKS_JSON", Gson().toJson(tracks))
+        outState.putString(TRACKS_JSON, Gson().toJson(tracks))
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -61,7 +63,7 @@ class SearchActivity : AppCompatActivity() {
         editTextValue = savedInstanceState.getString(SEARCH_QUERY, DEF_VALUE)
         val editText: EditText = findViewById(R.id.search)
         editText.setText(editTextValue)
-        val tracksJson = savedInstanceState.getString("TRACKS_JSON", "[]")
+        val tracksJson = savedInstanceState.getString(TRACKS_JSON, EMPTY_JSON_ARRAY)
         val restoredTracks: List<Track> = Gson().fromJson(tracksJson, Array<Track>::class.java).toList()
         tracks.clear()
         tracks.addAll(restoredTracks)

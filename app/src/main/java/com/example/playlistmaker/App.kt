@@ -11,7 +11,7 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         val defaultTheme = AppCompatDelegate.getDefaultNightMode() == AppCompatDelegate.MODE_NIGHT_YES
-        val preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE)
+        val preferences = getSharedPreferences(Constants.SETTINGS_KEY, MODE_PRIVATE)
         darkTheme = preferences.getBoolean("darkTheme", defaultTheme)
         switchTheme(darkTheme)
     }
@@ -25,7 +25,7 @@ class App: Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
-        getSharedPreferences("SETTINGS", MODE_PRIVATE)
+        getSharedPreferences(Constants.SETTINGS_KEY, MODE_PRIVATE)
             .edit() {
                 putBoolean("darkTheme", darkThemeEnabled)
             }
