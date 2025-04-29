@@ -30,25 +30,32 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var queryInput: EditText
     private lateinit var clearIcon: ImageView
     private lateinit var recyclerView: RecyclerView
+    private lateinit var historyRecyclerView: RecyclerView
 
     private lateinit var noResults: View
     private lateinit var noInternet: View
+    private lateinit var searchHistoryView: View
     private lateinit var buttonRefresh: Button
+    private lateinit var buttonClearHistory: Button
 
     private val tracks = ArrayList<Track>()
-    private val adapter = SearchAdapter()
+    private val adapter = SearchAdapter({ track -> saveToHistory(track)})
+    private val historyAdapter = SearchAdapter { track -> saveToHistory(track) }
+    private val searchHistory by lazy { SearchHistory(this) }
 
     private var editTextValue: String = DEF_VALUE
 
     companion object {
         const val SEARCH_QUERY = "SEARCH_QUERY"
         const val DEF_VALUE = ""
+        const val TRACKS_JSON = "TRACKS_JSON"
+        const val EMPTY_JSON_ARRAY = "[]"
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_QUERY, editTextValue)
-        outState.putString("TRACKS_JSON", Gson().toJson(tracks))
+        outState.putString(TRACKS_JSON, Gson().toJson(tracks))
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -56,7 +63,7 @@ class SearchActivity : AppCompatActivity() {
         editTextValue = savedInstanceState.getString(SEARCH_QUERY, DEF_VALUE)
         val editText: EditText = findViewById(R.id.search)
         editText.setText(editTextValue)
-        val tracksJson = savedInstanceState.getString("TRACKS_JSON", "[]")
+        val tracksJson = savedInstanceState.getString(TRACKS_JSON, EMPTY_JSON_ARRAY)
         val restoredTracks: List<Track> = Gson().fromJson(tracksJson, Array<Track>::class.java).toList()
         tracks.clear()
         tracks.addAll(restoredTracks)
@@ -82,8 +89,13 @@ class SearchActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
 
+        historyRecyclerView = findViewById(R.id.search_history_results)
+        historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        historyRecyclerView.adapter = historyAdapter
+
         clearIcon = findViewById(R.id.clear_icon)
         queryInput = findViewById(R.id.search)
+        searchHistoryView = findViewById(R.id.search_history)
 
         clearIcon.setOnClickListener {
             queryInput.setText("")
@@ -98,12 +110,18 @@ class SearchActivity : AppCompatActivity() {
         noResults = findViewById(R.id.no_results)
         noInternet = findViewById(R.id.no_internet)
         buttonRefresh = findViewById(R.id.button_refresh)
+        buttonClearHistory = findViewById(R.id.button_clear_history)
 
         buttonRefresh.setOnClickListener {
             val query = queryInput.text.toString().trim()
             if (query.isNotEmpty()) {
                 performSearch(query)
             }
+        }
+
+        buttonClearHistory.setOnClickListener {
+            searchHistory.clearHistory()
+            showHistory()
         }
 
         val searchTextWatcher = object : TextWatcher {
@@ -114,6 +132,8 @@ class SearchActivity : AppCompatActivity() {
 
                 editTextValue = s.toString()
                 clearIcon.isVisible = !s.isNullOrEmpty()
+
+                searchHistoryView.isVisible = queryInput.text.isEmpty() && queryInput.hasFocus()
 
                 val filteredTracks = tracks.filter {
                     it.trackName.contains(editTextValue, ignoreCase = true) ||
@@ -131,6 +151,11 @@ class SearchActivity : AppCompatActivity() {
 
         queryInput.addTextChangedListener(searchTextWatcher)
 
+        queryInput.setOnFocusChangeListener { _, hasFocus ->
+            val isHistoryVisible = hasFocus && queryInput.text.isEmpty() && searchHistory.getHistory().isNotEmpty()
+            searchHistoryView.visibility = if (isHistoryVisible) View.VISIBLE else View.GONE
+        }
+
         queryInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 val query = queryInput.text.toString().trim()
@@ -142,6 +167,7 @@ class SearchActivity : AppCompatActivity() {
                 false
             }
         }
+        showHistory()
     }
 
     private fun performSearch(query: String) {
@@ -174,5 +200,16 @@ class SearchActivity : AppCompatActivity() {
     private fun hidePlaceholders() {
         noResults.visibility = View.GONE
         noInternet.visibility = View.GONE
+    }
+
+    private fun saveToHistory(track: Track) {
+        searchHistory.saveTrack(track)
+        showHistory()
+    }
+
+    private fun showHistory() {
+        val history = searchHistory.getHistory()
+        historyAdapter.updateData(history)
+        searchHistoryView.isVisible = history.isNotEmpty() && queryInput.text.isEmpty()
     }
 }

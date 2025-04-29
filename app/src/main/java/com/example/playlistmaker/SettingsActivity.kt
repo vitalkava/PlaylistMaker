@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.net.toUri
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +29,15 @@ class SettingsActivity : AppCompatActivity() {
         val buttonShareApp = findViewById<Button>(R.id.button_share_app)
         val buttonWriteToSupport = findViewById<Button>(R.id.button_write_to_support)
         val buttonArrowForward = findViewById<Button>(R.id.button_arrow_forward)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+
+        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            (applicationContext as App).switchTheme(isChecked)
+        }
+
+        val preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE)
+        val isDarkTheme = preferences.getBoolean("darkTheme", false)
+        themeSwitcher.isChecked = isDarkTheme
 
         buttonShareApp.setOnClickListener {
             val sharedText = getString(R.string.shared_text_in_button_share_apk)
