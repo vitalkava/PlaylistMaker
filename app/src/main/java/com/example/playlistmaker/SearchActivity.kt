@@ -1,6 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -10,7 +11,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -22,8 +22,6 @@ import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
 
@@ -39,8 +37,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var buttonClearHistory: Button
 
     private val tracks = ArrayList<Track>()
-    private val adapter = SearchAdapter({ track -> saveToHistory(track)})
-    private val historyAdapter = SearchAdapter { track -> saveToHistory(track) }
+    private val adapter = SearchAdapter({ track -> saveToHistoryAndOpenPlayer(track)})
+    private val historyAdapter = SearchAdapter { track -> saveToHistoryAndOpenPlayer(track) }
     private val searchHistory by lazy { SearchHistory(this) }
 
     private var editTextValue: String = DEF_VALUE
@@ -202,9 +200,14 @@ class SearchActivity : AppCompatActivity() {
         noInternet.visibility = View.GONE
     }
 
-    private fun saveToHistory(track: Track) {
+    private fun saveToHistoryAndOpenPlayer(track: Track) {
         searchHistory.saveTrack(track)
         showHistory()
+
+        val intent = Intent(this, AudioPlayerActivity::class.java).apply {
+            putExtra("TRACK_DATA", Gson().toJson(track))
+        }
+        startActivity(intent)
     }
 
     private fun showHistory() {

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AudioPlayerActivity">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="56dp" />
+
+    <Button
+        android:id="@+id/button_back"
+        style="@style/ButtonBackStyle"
+        app:layout_constraintBottom_toTopOf="@id/top_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginBottom="24dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toTopOf="@id/tvSongName"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_guideline"
+        app:cardBackgroundColor="@android:color/transparent"
+        >
+
+        <ImageView
+            android:id="@+id/ivAlbumCard"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/album_cover"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/album_card_312dp" />
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/tvSongName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="@dimen/margin_12"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_medium"
+        android:maxLines="1"
+        android:textColor="?attr/colorOnPrimary"
+        android:textFontWeight="400"
+        android:textSize="22sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/tvBandName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="May who who (feat. Motikkkkkkkkkkkkkkkkkkkkkkkkkkk)" />
+
+    <TextView
+        android:id="@+id/tvBandName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="@dimen/margin_12"
+        android:layout_marginBottom="28dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/ys_display_medium"
+        android:maxLines="1"
+        android:textColor="?attr/colorOnPrimary"
+        android:textFontWeight="400"
+        android:textSize="14sp"
+        app:layout_constrainedWidth="true"
+        app:layout_constraintBottom_toTopOf="@id/play_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Lee Sock" />
+
+    <ImageView
+        android:id="@+id/play_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/play_button"
+        app:layout_constraintBottom_toTopOf="@id/progress_track"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/add_to_playlist_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/add_to_playlist_button"
+        app:layout_constraintBottom_toBottomOf="@id/play_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/play_button"
+        />
+
+    <ImageView
+        android:id="@+id/add_to_favorites_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/add_to_favorites_button"
+        app:layout_constraintBottom_toBottomOf="@id/play_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/play_button" />
+
+    <TextView
+        android:id="@+id/progress_track"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="30dp"
+        android:fontFamily="@font/ys_display_medium"
+        android:textColor="?attr/colorOnPrimary"
+        android:textFontWeight="500"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@id/tvSongDuration"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="0:30" />
+
+    <TextView
+        android:id="@+id/tvSongDuration"
+        style="@style/MeteDataStyle"
+        android:text="@string/duration"
+        app:layout_constraintBottom_toTopOf="@id/tvAlbumName"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvAlbumName"
+        style="@style/MeteDataStyle"
+        android:text="@string/album"
+        app:layout_constraintBottom_toTopOf="@id/tvSongYear"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSongYear"
+        style="@style/MeteDataStyle"
+        android:text="@string/year"
+        app:layout_constraintBottom_toTopOf="@id/tvSongGenre"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSongGenre"
+        style="@style/MeteDataStyle"
+        android:text="@string/genre"
+        app:layout_constraintBottom_toTopOf="@id/tvTrackCountry"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvTrackCountry"
+        style="@style/MeteDataStyle"
+        android:layout_marginBottom="20dp"
+        android:text="@string/country"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvSongDurationValue"
+        style="@style/ValueOfMetaDataStyle"
+        app:layout_constraintBottom_toBottomOf="@id/tvSongDuration"
+        app:layout_constraintTop_toTopOf="@id/tvSongDuration"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="5:30" />
+
+    <TextView
+        android:id="@+id/tvAlbumNameValue"
+        style="@style/ValueOfMetaDataStyle"
+        app:layout_constraintBottom_toBottomOf="@id/tvAlbumName"
+        app:layout_constraintTop_toTopOf="@id/tvAlbumName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:maxLines="1"
+        android:ellipsize="end"
+        app:layout_constrainedWidth="true"
+        tools:text="Mayyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy" />
+
+    <TextView
+        android:id="@+id/tvSongYearValue"
+        style="@style/ValueOfMetaDataStyle"
+        app:layout_constraintBottom_toBottomOf="@id/tvSongYear"
+        app:layout_constraintTop_toTopOf="@id/tvSongYear"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="2023" />
+
+    <TextView
+        android:id="@+id/tvSongGenreValue"
+        style="@style/ValueOfMetaDataStyle"
+        app:layout_constraintBottom_toBottomOf="@id/tvSongGenre"
+        app:layout_constraintTop_toTopOf="@id/tvSongGenre"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Purring" />
+
+    <TextView
+        android:id="@+id/tvTrackCountryValue"
+        style="@style/ValueOfMetaDataStyle"
+        app:layout_constraintBottom_toBottomOf="@id/tvTrackCountry"
+        app:layout_constraintTop_toTopOf="@id/tvTrackCountry"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Беларусь" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
