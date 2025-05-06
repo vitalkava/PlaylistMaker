@@ -18,7 +18,6 @@
             android:id="@+id/ivAlbumCard"
             android:layout_width="45dp"
             android:layout_height="45dp"
-
             android:contentDescription="@string/album_cover"
             android:src="@drawable/album_card_image"/>
 
