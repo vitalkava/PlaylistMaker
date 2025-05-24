@@ -31,6 +31,25 @@
         <item name="android:letterSpacing">0</item>
     </style>
 
+    <style name="MeteDataStyle">
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:textColor">@color/PM_gray</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:paddingTop">9dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    
+    <style name="ValueOfMetaDataStyle" parent="MeteDataStyle">
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="layout_constraintHorizontal_bias">1.0</item>
+        <item name="android:layout_marginEnd">16dp</item>
+        <item name="android:layout_marginStart">120dp</item>
+    </style>
+
     <style name="SettingsSwitchStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/height_of_settings_button</item>

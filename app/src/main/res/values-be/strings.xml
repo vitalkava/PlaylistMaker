@@ -22,4 +22,9 @@
     <string name="no_internet_content_description">Выява перакрэсленага значка WI-FI у значку сімвала ноты</string>
     <string name="search_history">Вы шукалi</string>
     <string name="clear_history">Ачысціць гісторыю</string>
+    <string name="duration">Працягласць</string>
+    <string name="album">Альбом</string>
+    <string name="year">Год</string>
+    <string name="genre">Жанр</string>
+    <string name="country">Краiна</string>
 </resources>

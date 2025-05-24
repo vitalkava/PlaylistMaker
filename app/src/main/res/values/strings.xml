@@ -25,5 +25,10 @@
     <string name="no_internet_content_description">Image of crossed out WI-FI icon in music note symbol</string>
     <string name="search_history">You searched</string>
     <string name="clear_history">Clear history</string>
+    <string name="duration">Duration</string>
+    <string name="album">Album</string>
+    <string name="year">Year</string>
+    <string name="genre">Genre</string>
+    <string name="country">Country</string>
 
 </resources>
