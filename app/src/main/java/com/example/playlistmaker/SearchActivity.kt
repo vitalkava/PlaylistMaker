@@ -3,6 +3,8 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -37,9 +39,11 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var buttonClearHistory: Button
 
     private val tracks = ArrayList<Track>()
-    private val adapter = SearchAdapter({ track -> saveToHistoryAndOpenPlayer(track)})
+    private val adapter = SearchAdapter({ track -> saveToHistoryAndOpenPlayer(track) })
     private val historyAdapter = SearchAdapter { track -> saveToHistoryAndOpenPlayer(track) }
     private val searchHistory by lazy { SearchHistory(this) }
+    private var isClickAllowed: Boolean = true
+    private val handler = Handler(Looper.getMainLooper())
 
     private var editTextValue: String = DEF_VALUE
 
@@ -48,6 +52,7 @@ class SearchActivity : AppCompatActivity() {
         const val DEF_VALUE = ""
         const val TRACKS_JSON = "TRACKS_JSON"
         const val EMPTY_JSON_ARRAY = "[]"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -62,7 +67,8 @@ class SearchActivity : AppCompatActivity() {
         val editText: EditText = findViewById(R.id.search)
         editText.setText(editTextValue)
         val tracksJson = savedInstanceState.getString(TRACKS_JSON, EMPTY_JSON_ARRAY)
-        val restoredTracks: List<Track> = Gson().fromJson(tracksJson, Array<Track>::class.java).toList()
+        val restoredTracks: List<Track> =
+            Gson().fromJson(tracksJson, Array<Track>::class.java).toList()
         tracks.clear()
         tracks.addAll(restoredTracks)
         adapter.updateData(tracks)
@@ -101,7 +107,8 @@ class SearchActivity : AppCompatActivity() {
             noResults.visibility = View.INVISIBLE
             noInternet.visibility = View.INVISIBLE
             adapter.updateData(tracks)
-            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            val inputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(queryInput.windowToken, 0)
         }
 
@@ -150,7 +157,8 @@ class SearchActivity : AppCompatActivity() {
         queryInput.addTextChangedListener(searchTextWatcher)
 
         queryInput.setOnFocusChangeListener { _, hasFocus ->
-            val isHistoryVisible = hasFocus && queryInput.text.isEmpty() && searchHistory.getHistory().isNotEmpty()
+            val isHistoryVisible =
+                hasFocus && queryInput.text.isEmpty() && searchHistory.getHistory().isNotEmpty()
             searchHistoryView.visibility = if (isHistoryVisible) View.VISIBLE else View.GONE
         }
 
@@ -166,6 +174,15 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         showHistory()
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
     }
 
     private fun performSearch(query: String) {
@@ -201,13 +218,16 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun saveToHistoryAndOpenPlayer(track: Track) {
-        searchHistory.saveTrack(track)
-        showHistory()
 
-        val intent = Intent(this, AudioPlayerActivity::class.java).apply {
-            putExtra("TRACK_DATA", Gson().toJson(track))
+        if (clickDebounce()) {
+            searchHistory.saveTrack(track)
+            showHistory()
+
+            val intent = Intent(this, AudioPlayerActivity::class.java).apply {
+                putExtra("TRACK_DATA", Gson().toJson(track))
+            }
+            startActivity(intent)
         }
-        startActivity(intent)
     }
 
     private fun showHistory() {
