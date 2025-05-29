@@ -39,11 +39,12 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var buttonClearHistory: Button
 
     private val tracks = ArrayList<Track>()
-    private val adapter = SearchAdapter({ track -> saveToHistoryAndOpenPlayer(track) })
+    private val adapter = SearchAdapter { track -> saveToHistoryAndOpenPlayer(track) }
     private val historyAdapter = SearchAdapter { track -> saveToHistoryAndOpenPlayer(track) }
     private val searchHistory by lazy { SearchHistory(this) }
     private var isClickAllowed: Boolean = true
     private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { performSearch(queryInput.text.toString().trim()) }
 
     private var editTextValue: String = DEF_VALUE
 
@@ -53,6 +54,7 @@ class SearchActivity : AppCompatActivity() {
         const val TRACKS_JSON = "TRACKS_JSON"
         const val EMPTY_JSON_ARRAY = "[]"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -135,6 +137,7 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
+                searchDebounce()
                 editTextValue = s.toString()
                 clearIcon.isVisible = !s.isNullOrEmpty()
 
@@ -174,6 +177,11 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         showHistory()
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
     private fun clickDebounce(): Boolean {
