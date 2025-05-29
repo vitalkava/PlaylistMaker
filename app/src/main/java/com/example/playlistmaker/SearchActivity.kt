@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -37,6 +38,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchHistoryView: View
     private lateinit var buttonRefresh: Button
     private lateinit var buttonClearHistory: Button
+    private lateinit var progressBar: ProgressBar
 
     private val tracks = ArrayList<Track>()
     private val adapter = SearchAdapter { track -> saveToHistoryAndOpenPlayer(track) }
@@ -102,6 +104,7 @@ class SearchActivity : AppCompatActivity() {
         clearIcon = findViewById(R.id.clear_icon)
         queryInput = findViewById(R.id.search)
         searchHistoryView = findViewById(R.id.search_history)
+        progressBar = findViewById(R.id.progressBar)
 
         clearIcon.setOnClickListener {
             queryInput.setText("")
@@ -195,11 +198,15 @@ class SearchActivity : AppCompatActivity() {
 
     private fun performSearch(query: String) {
         hidePlaceholders()
+        recyclerView.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
         RetrofitClient.iTunesService.search(query).enqueue(object : Callback<TrackResponse> {
             override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
+                progressBar.visibility = View.GONE
                 if (response.isSuccessful) {
                     val resultTracks = response.body()?.results ?: listOf()
                     if (resultTracks.isNotEmpty()) {
+                        recyclerView.visibility = View.VISIBLE
                         tracks.clear()
                         tracks.addAll(resultTracks)
                         adapter.updateData(tracks)
@@ -214,6 +221,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
+                progressBar.visibility = View.GONE
                 adapter.updateData(emptyList())
                 noInternet.visibility = View.VISIBLE
             }
