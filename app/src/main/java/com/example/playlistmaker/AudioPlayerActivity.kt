@@ -1,6 +1,9 @@
 package com.example.playlistmaker
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
@@ -13,8 +16,20 @@ import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
+import androidx.core.net.toUri
 
 class AudioPlayerActivity : AppCompatActivity() {
+
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+    }
+
+    private var playerState = STATE_DEFAULT
+
+    private var mainThreadHandler: Handler? = null
 
     private lateinit var buttonBack: Button
     private lateinit var playButton: ImageView
@@ -32,14 +47,18 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var songGenre: TextView
     private lateinit var songCountry: TextView
 
+    private var mediaPlayer = MediaPlayer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        mainThreadHandler = Handler(Looper.getMainLooper())
+
         enableEdgeToEdge()
         setContentView(R.layout.activity_audio_player)
 
         buttonBack = findViewById(R.id.button_back)
-//        playButton = findViewById(R.id.play_button)
+        playButton = findViewById(R.id.play_button)
 //        addToPlayListButton = findViewById(R.id.add_to_playlist_button)
 //        addToFavoritesButton = findViewById(R.id.add_to_favorites_button)
 
@@ -68,12 +87,29 @@ class AudioPlayerActivity : AppCompatActivity() {
         jsonTrack?.let {
             val track = Gson().fromJson(it, Track::class.java)
             updateUI(track)
+            preparePlayer(track)
         }
 
+        playButton.setOnClickListener {
+            playbackControl()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
+        stopUpdatingProgress()
     }
 
     private fun updateUI(track: Track) {
-        progressTrack.text = "5:30"
+        if (progressTrack.text.isEmpty()) {
+            progressTrack.text = "00:00"
+        }
         trackName.text = track.trackName
         artistName.text = track.artistName
         songDuration.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
@@ -95,5 +131,63 @@ class AudioPlayerActivity : AppCompatActivity() {
         } else {
             artWork.setImageResource(R.drawable.album_card_312dp)
         }
+    }
+
+    private fun preparePlayer(track: Track) {
+        mediaPlayer.setDataSource(this, track.previewUrl.toUri())
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playButton.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            playButton.setImageResource(R.drawable.play_button)
+            playerState = STATE_PREPARED
+            progressTrack.text = "00:00"
+            stopUpdatingProgress()
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playButton.setImageResource(R.drawable.pause_button)
+        playerState = STATE_PLAYING
+        startUpdatingProgress()
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playButton.setImageResource(R.drawable.play_button)
+        playerState = STATE_PAUSED
+        stopUpdatingProgress()
+    }
+
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+
+    private val updateRunnable = object : Runnable {
+        override fun run() {
+            if (playerState == STATE_PLAYING && mediaPlayer.isPlaying) {
+                progressTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault())
+                    .format(mediaPlayer.currentPosition)
+                mainThreadHandler?.postDelayed(this, 300)
+            }
+        }
+    }
+
+    private fun startUpdatingProgress() {
+        mainThreadHandler?.post(updateRunnable)
+    }
+
+    private fun stopUpdatingProgress() {
+        mainThreadHandler?.removeCallbacks(updateRunnable)
     }
 }
