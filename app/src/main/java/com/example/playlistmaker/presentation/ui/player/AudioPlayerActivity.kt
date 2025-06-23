@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.player
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -17,6 +17,8 @@ import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
 import androidx.core.net.toUri
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 
 class AudioPlayerActivity : AppCompatActivity() {
 
@@ -112,7 +114,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
         trackName.text = track.trackName
         artistName.text = track.artistName
-        songDuration.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTimeMillis)
+        songDuration.text = track.trackTime
         if (track.collectionName.isNotEmpty()) {
             albumName.text = track.collectionName
         } else {

@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +8,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.net.toUri
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.use_case.GetCurrentThemeUseCase
+import com.example.playlistmaker.domain.use_case.SwitchThemeUseCase
 import com.google.android.material.switchmaterial.SwitchMaterial
+
+private lateinit var switchThemeUseCase: SwitchThemeUseCase
+private lateinit var getCurrentThemeUseCase: GetCurrentThemeUseCase
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,6 +28,9 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
+        switchThemeUseCase = Creator.provideSwitchThemeUseCase(context = this)
+        getCurrentThemeUseCase = Creator.provideGetCurrentThemeUseCase(context = this)
+
         val backButton: Button = findViewById(R.id.button_back)
         backButton.setOnClickListener {
             finish()
@@ -31,13 +41,11 @@ class SettingsActivity : AppCompatActivity() {
         val buttonArrowForward = findViewById<Button>(R.id.button_arrow_forward)
         val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
 
+        themeSwitcher.isChecked = getCurrentThemeUseCase.execute()
         themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+            switchThemeUseCase.execute(isChecked)
             (applicationContext as App).switchTheme(isChecked)
         }
-
-        val preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE)
-        val isDarkTheme = preferences.getBoolean("darkTheme", false)
-        themeSwitcher.isChecked = isDarkTheme
 
         buttonShareApp.setOnClickListener {
             val sharedText = getString(R.string.shared_text_in_button_share_apk)

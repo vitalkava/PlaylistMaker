@@ -1,7 +1,6 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.tracks
 
 import android.content.Context
-import android.content.Intent
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -12,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 
 class SearchAdapter(private val onTrackClicked: (Track) -> Unit): RecyclerView.Adapter<SearchResultViewHolder> () {
 
@@ -49,15 +48,10 @@ class SearchResultViewHolder(itemView: View): ViewHolder(itemView) {
     private val artistName: TextView = itemView.findViewById(R.id.tvBandName)
     private val songDuration: TextView = itemView.findViewById(R.id.tvSongDuration)
 
-    private val timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-
     fun bind(track: Track) {
         trackName.text = track.trackName
         artistName.text = track.artistName
-
-        println("Track duration in millis: ${track.trackTimeMillis}")
-
-        songDuration.text = timeFormat.format(track.trackTimeMillis)
+        songDuration.text = track.trackTime
 
         Glide.with(itemView.context).load(track.artworkUrl100).placeholder(R.drawable.album_card_image).transform(RoundedCorners(dpToPx(2f, itemView.context))).into(albumImage)
     }

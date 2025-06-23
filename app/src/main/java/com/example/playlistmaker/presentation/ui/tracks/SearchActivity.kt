@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.tracks
 
 import android.content.Context
 import android.content.Intent
@@ -21,10 +21,14 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.Creator
+import com.example.playlistmaker.presentation.ui.player.AudioPlayerActivity
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.api.SearchHistoryInteractor
+import com.example.playlistmaker.domain.api.TracksInteractor
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.domain.use_case.FilterTracksUseCase
 import com.google.gson.Gson
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class SearchActivity : AppCompatActivity() {
 
@@ -39,11 +43,13 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var buttonRefresh: Button
     private lateinit var buttonClearHistory: Button
     private lateinit var progressBar: ProgressBar
+    private lateinit var tracksInteractor: TracksInteractor
+    private lateinit var searchHistoryInteractor: SearchHistoryInteractor
+    private lateinit var filterTracksUseCase: FilterTracksUseCase
 
     private val tracks = ArrayList<Track>()
     private val adapter = SearchAdapter { track -> saveToHistoryAndOpenPlayer(track) }
     private val historyAdapter = SearchAdapter { track -> saveToHistoryAndOpenPlayer(track) }
-    private val searchHistory by lazy { SearchHistory(this) }
     private var isClickAllowed: Boolean = true
     private val handler = Handler(Looper.getMainLooper())
     private val searchRunnable = Runnable { performSearch(queryInput.text.toString().trim()) }
@@ -93,6 +99,10 @@ class SearchActivity : AppCompatActivity() {
             finish()
         }
 
+        tracksInteractor = Creator.provideTracksInteractor()
+        searchHistoryInteractor = Creator.provideSearchHistoryInteractor(this)
+        filterTracksUseCase = Creator.provideFilterTracksUseCase()
+
         recyclerView = findViewById(R.id.search_results)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = adapter
@@ -112,9 +122,7 @@ class SearchActivity : AppCompatActivity() {
             noResults.visibility = View.INVISIBLE
             noInternet.visibility = View.INVISIBLE
             adapter.updateData(tracks)
-            val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(queryInput.windowToken, 0)
+            hideKeyboard()
         }
 
         noResults = findViewById(R.id.no_results)
@@ -130,32 +138,23 @@ class SearchActivity : AppCompatActivity() {
         }
 
         buttonClearHistory.setOnClickListener {
-            searchHistory.clearHistory()
+            searchHistoryInteractor.clearHistory()
             showHistory()
         }
 
         val searchTextWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            }
 
+            }
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
 
                 searchDebounce()
                 editTextValue = s.toString()
                 clearIcon.isVisible = !s.isNullOrEmpty()
-
                 searchHistoryView.isVisible = queryInput.text.isEmpty() && queryInput.hasFocus()
-
-                val filteredTracks = tracks.filter {
-                    it.trackName.contains(editTextValue, ignoreCase = true) ||
-                            it.artistName.contains(editTextValue, ignoreCase = true)
-                }
-
-                (recyclerView.adapter as SearchAdapter).apply {
-                    adapter.updateData(filteredTracks)
-                }
+                val filteredTracks = filterTracksUseCase.execute(tracks, editTextValue)
+                adapter.updateData(filteredTracks)
             }
-
             override fun afterTextChanged(s: Editable?) {
             }
         }
@@ -164,7 +163,7 @@ class SearchActivity : AppCompatActivity() {
 
         queryInput.setOnFocusChangeListener { _, hasFocus ->
             val isHistoryVisible =
-                hasFocus && queryInput.text.isEmpty() && searchHistory.getHistory().isNotEmpty()
+                hasFocus && queryInput.text.isEmpty() && searchHistoryInteractor.getHistory().isNotEmpty()
             searchHistoryView.visibility = if (isHistoryVisible) View.VISIBLE else View.GONE
         }
 
@@ -200,30 +199,21 @@ class SearchActivity : AppCompatActivity() {
         hidePlaceholders()
         recyclerView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
-        RetrofitClient.iTunesService.search(query).enqueue(object : Callback<TrackResponse> {
-            override fun onResponse(call: Call<TrackResponse>, response: Response<TrackResponse>) {
-                progressBar.visibility = View.GONE
-                if (response.isSuccessful) {
-                    val resultTracks = response.body()?.results ?: listOf()
-                    if (resultTracks.isNotEmpty()) {
+
+        tracksInteractor.searchTracks(query, object : TracksInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>) {
+                runOnUiThread {
+                    progressBar.visibility = View.GONE
+                    if (foundTracks.isNotEmpty()) {
                         recyclerView.visibility = View.VISIBLE
                         tracks.clear()
-                        tracks.addAll(resultTracks)
+                        tracks.addAll(foundTracks)
                         adapter.updateData(tracks)
                     } else {
                         adapter.updateData(emptyList())
                         noResults.visibility = View.VISIBLE
                     }
-                } else {
-                    adapter.updateData(emptyList())
-                    noResults.visibility = View.VISIBLE
                 }
-            }
-
-            override fun onFailure(call: Call<TrackResponse>, t: Throwable) {
-                progressBar.visibility = View.GONE
-                adapter.updateData(emptyList())
-                noInternet.visibility = View.VISIBLE
             }
         })
     }
@@ -236,7 +226,7 @@ class SearchActivity : AppCompatActivity() {
     private fun saveToHistoryAndOpenPlayer(track: Track) {
 
         if (clickDebounce()) {
-            searchHistory.saveTrack(track)
+            searchHistoryInteractor.saveTrack(track)
             showHistory()
 
             val intent = Intent(this, AudioPlayerActivity::class.java).apply {
@@ -247,8 +237,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showHistory() {
-        val history = searchHistory.getHistory()
+        val history = searchHistoryInteractor.getHistory()
         historyAdapter.updateData(history)
         searchHistoryView.isVisible = history.isNotEmpty() && queryInput.text.isEmpty()
+    }
+
+    private fun hideKeyboard() {
+        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+        imm?.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
     }
 }
