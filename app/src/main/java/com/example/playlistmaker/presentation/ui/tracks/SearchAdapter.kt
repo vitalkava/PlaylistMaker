@@ -1,11 +1,13 @@
 package com.example.playlistmaker.presentation.ui.tracks
 
 import android.content.Context
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -30,10 +32,15 @@ class SearchAdapter(private val onTrackClicked: (Track) -> Unit): RecyclerView.A
     }
 
     override fun onBindViewHolder(holder: SearchResultViewHolder, position: Int) {
+
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
             onTrackClicked(tracks[position])
         }
+    }
+
+    init {
+        setHasStableIds(true)
     }
 
     override fun getItemCount(): Int {
@@ -49,11 +56,22 @@ class SearchResultViewHolder(itemView: View): ViewHolder(itemView) {
     private val songDuration: TextView = itemView.findViewById(R.id.tvSongDuration)
 
     fun bind(track: Track) {
+        trackName.isSelected = false
+        artistName.isSelected = false
+        trackName.maxLines = 1
+        trackName.ellipsize = TextUtils.TruncateAt.END
+        artistName.maxLines = 1
+        artistName.ellipsize = TextUtils.TruncateAt.END
+
         trackName.text = track.trackName
         artistName.text = track.artistName
         songDuration.text = track.trackTime
 
-        Glide.with(itemView.context).load(track.artworkUrl100).placeholder(R.drawable.album_card_image).transform(RoundedCorners(dpToPx(2f, itemView.context))).into(albumImage)
+        Glide.with(itemView.context)
+            .load(track.artworkUrl100)
+            .placeholder(R.drawable.album_card_image)
+            .transform(RoundedCorners(dpToPx(2f, itemView.context)))
+            .into(albumImage)
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {

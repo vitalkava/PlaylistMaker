@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="61dp"
-    xmlns:tools="http://schemas.android.com/tools"
     android:backgroundTint="?attr/colorPrimary">
 
     <LinearLayout
@@ -19,13 +19,13 @@
             android:layout_width="45dp"
             android:layout_height="45dp"
             android:contentDescription="@string/album_cover"
-            android:src="@drawable/album_card_image"/>
+            android:src="@drawable/album_card_image" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
             android:layout_marginHorizontal="8dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
@@ -33,15 +33,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="19dp"
                 android:layout_marginTop="6dp"
-                android:fontFamily="@font/ys_display_regular"
-                android:textFontWeight="400"
-                android:textColor="?attr/colorAccent"
-                android:maxLines="1"
                 android:ellipsize="end"
-                tools:text="naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaame"
-                android:textSize="16sp" />
+                android:fontFamily="@font/ys_display_regular"
+                android:maxLines="1"
+                android:textColor="?attr/colorAccent"
+                android:textFontWeight="400"
+                android:textSize="16sp"
+                tools:text="naaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaame" />
 
             <LinearLayout
+                android:id="@+id/bandAndDuration"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginVertical="1dp">
@@ -51,15 +52,15 @@
                     style="@style/textSearchResultStyle"
                     android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:maxLines="1"
                     android:ellipsize="end"
-                    tools:text="baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaand" />
+                    android:maxLines="1"
+                    tools:text="baaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaand" />
 
                 <ImageView
                     android:layout_width="13dp"
                     android:layout_height="13dp"
-                    android:src="@drawable/dot"
-                    android:contentDescription="@string/dot_separator" />
+                    android:contentDescription="@string/dot_separator"
+                    android:src="@drawable/dot" />
 
                 <TextView
                     android:id="@+id/tvSongDuration"
@@ -72,8 +73,8 @@
         <ImageView
             android:layout_width="25dp"
             android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
             android:contentDescription="@string/arrow_forward"
-            android:src="@drawable/arrow_forward_icon_24dp"
-            android:layout_gravity="center_vertical" />
+            android:src="@drawable/arrow_forward_icon_24dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
