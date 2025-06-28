@@ -1,19 +1,20 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.presentation.ui.tracks
 
 import android.content.Context
-import android.content.Intent
+import android.text.TextUtils
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 
 class SearchAdapter(private val onTrackClicked: (Track) -> Unit): RecyclerView.Adapter<SearchResultViewHolder> () {
 
@@ -31,10 +32,15 @@ class SearchAdapter(private val onTrackClicked: (Track) -> Unit): RecyclerView.A
     }
 
     override fun onBindViewHolder(holder: SearchResultViewHolder, position: Int) {
+
         holder.bind(tracks[position])
         holder.itemView.setOnClickListener {
             onTrackClicked(tracks[position])
         }
+    }
+
+    init {
+        setHasStableIds(true)
     }
 
     override fun getItemCount(): Int {
@@ -49,17 +55,23 @@ class SearchResultViewHolder(itemView: View): ViewHolder(itemView) {
     private val artistName: TextView = itemView.findViewById(R.id.tvBandName)
     private val songDuration: TextView = itemView.findViewById(R.id.tvSongDuration)
 
-    private val timeFormat = SimpleDateFormat("mm:ss", Locale.getDefault())
-
     fun bind(track: Track) {
+        trackName.isSelected = false
+        artistName.isSelected = false
+        trackName.maxLines = 1
+        trackName.ellipsize = TextUtils.TruncateAt.END
+        artistName.maxLines = 1
+        artistName.ellipsize = TextUtils.TruncateAt.END
+
         trackName.text = track.trackName
         artistName.text = track.artistName
+        songDuration.text = track.trackTime
 
-        println("Track duration in millis: ${track.trackTimeMillis}")
-
-        songDuration.text = timeFormat.format(track.trackTimeMillis)
-
-        Glide.with(itemView.context).load(track.artworkUrl100).placeholder(R.drawable.album_card_image).transform(RoundedCorners(dpToPx(2f, itemView.context))).into(albumImage)
+        Glide.with(itemView.context)
+            .load(track.artworkUrl100)
+            .placeholder(R.drawable.album_card_image)
+            .transform(RoundedCorners(dpToPx(2f, itemView.context)))
+            .into(albumImage)
     }
 
     private fun dpToPx(dp: Float, context: Context): Int {

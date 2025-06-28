@@ -1,9 +1,9 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.domain.models
 
 data class Track(
     val trackName: String,
     val artistName: String,
-    val trackTimeMillis: Long,
+    val trackTime: String,
     val artworkUrl100: String,
     val collectionName: String,
     val releaseDate: String,
