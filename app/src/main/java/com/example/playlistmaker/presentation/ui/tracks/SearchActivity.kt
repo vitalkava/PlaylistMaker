@@ -21,7 +21,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.Creator
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.presentation.ui.player.AudioPlayerActivity
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.api.SearchHistoryInteractor

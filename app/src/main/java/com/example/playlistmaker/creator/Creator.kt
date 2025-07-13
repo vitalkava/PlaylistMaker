@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.creator
 
 import android.content.Context
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
