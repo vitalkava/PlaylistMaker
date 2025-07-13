@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.net.toUri
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import com.example.playlistmaker.domain.use_case.GetCurrentThemeUseCase
 import com.example.playlistmaker.domain.use_case.SwitchThemeUseCase
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -18,10 +19,14 @@ private lateinit var switchThemeUseCase: SwitchThemeUseCase
 private lateinit var getCurrentThemeUseCase: GetCurrentThemeUseCase
 
 class SettingsActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_settings)
+        setContentView(binding.root)
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -31,23 +36,17 @@ class SettingsActivity : AppCompatActivity() {
         switchThemeUseCase = Creator.provideSwitchThemeUseCase(context = this)
         getCurrentThemeUseCase = Creator.provideGetCurrentThemeUseCase(context = this)
 
-        val backButton: Button = findViewById(R.id.button_back)
-        backButton.setOnClickListener {
+        binding.buttonBack.setOnClickListener {
             finish()
         }
 
-        val buttonShareApp = findViewById<Button>(R.id.button_share_app)
-        val buttonWriteToSupport = findViewById<Button>(R.id.button_write_to_support)
-        val buttonArrowForward = findViewById<Button>(R.id.button_arrow_forward)
-        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
-
-        themeSwitcher.isChecked = getCurrentThemeUseCase.execute()
-        themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
+        binding.themeSwitcher.isChecked = getCurrentThemeUseCase.execute()
+        binding.themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
             switchThemeUseCase.execute(isChecked)
             (applicationContext as App).switchTheme(isChecked)
         }
 
-        buttonShareApp.setOnClickListener {
+        binding.buttonShareApp.setOnClickListener {
             val sharedText = getString(R.string.shared_text_in_button_share_apk)
             val titleShareScreen = getString(R.string.title_share_screen_in_button_share_apk)
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
@@ -57,7 +56,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(/* target = */ shareIntent, /* title = */ titleShareScreen))
         }
 
-        buttonWriteToSupport.setOnClickListener{
+        binding.buttonWriteToSupport.setOnClickListener{
             val recipientEmail = getString(R.string.recipient_email_in_button_write_to_support)
             val subject = getString(R.string.subject_in_button_write_to_support)
             val message = getString(R.string.message_in_button_write_to_support)
@@ -70,7 +69,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(emailIntent)
         }
 
-        buttonArrowForward.setOnClickListener {
+        binding.buttonArrowForward.setOnClickListener {
             val url = getString(R.string.url_in_button_arrow_forward)
 
             val arrowForwardIntent = Intent(Intent.ACTION_VIEW).apply {
