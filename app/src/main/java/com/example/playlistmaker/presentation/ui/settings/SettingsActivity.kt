@@ -2,7 +2,6 @@ package com.example.playlistmaker.presentation.ui.settings
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -11,9 +10,8 @@ import androidx.core.net.toUri
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
-import com.example.playlistmaker.domain.use_case.GetCurrentThemeUseCase
-import com.example.playlistmaker.domain.use_case.SwitchThemeUseCase
-import com.google.android.material.switchmaterial.SwitchMaterial
+import com.example.playlistmaker.settings.domain.GetCurrentThemeUseCase
+import com.example.playlistmaker.settings.domain.SwitchThemeUseCase
 
 private lateinit var switchThemeUseCase: SwitchThemeUseCase
 private lateinit var getCurrentThemeUseCase: GetCurrentThemeUseCase

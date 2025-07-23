@@ -1,7 +1,7 @@
-package com.example.playlistmaker.data.repository
+package com.example.playlistmaker.player.data
 
 import android.media.MediaPlayer
-import com.example.playlistmaker.domain.api.AudioPlayerRepository
+import com.example.playlistmaker.player.domain.AudioPlayerRepository
 
 class MediaPlayerRepositoryImpl: AudioPlayerRepository {
 

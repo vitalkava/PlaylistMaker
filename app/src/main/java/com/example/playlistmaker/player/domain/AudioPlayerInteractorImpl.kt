@@ -1,7 +1,4 @@
-package com.example.playlistmaker.domain.impl
-
-import com.example.playlistmaker.domain.api.AudioPlayerInteractor
-import com.example.playlistmaker.domain.api.AudioPlayerRepository
+package com.example.playlistmaker.player.domain
 
 class AudioPlayerInteractorImpl(private val repository: AudioPlayerRepository) :
     AudioPlayerInteractor {

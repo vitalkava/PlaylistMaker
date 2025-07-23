@@ -1,4 +1,6 @@
-package com.example.playlistmaker.data.dto
+package com.example.playlistmaker.search.data
+
+import com.example.playlistmaker.data.dto.Response
 
 data class TrackSearchResponse (
     val searchType: String,

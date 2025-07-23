@@ -26,7 +26,7 @@
         android:layout_height="52dp">
 
         <EditText
-            android:id="@+id/search"
+            android:id="@+id/searchInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
@@ -86,6 +86,7 @@
             android:contentDescription="@string/no_results"/>
 
         <TextView
+            android:id="@+id/noResultsText"
             style="@style/placeholderTextStyle"
             android:text="@string/nothing_found" />
     </LinearLayout>
@@ -117,7 +118,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/search_history"
+        android:id="@+id/searchHistory"
         android:orientation="vertical"
         android:layout_marginTop="24dp"
         android:gravity="center_horizontal"
@@ -134,14 +135,14 @@
             android:textColor="?attr/colorOnPrimary"/>
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/search_history_results"
+            android:id="@+id/searchHistoryResults"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:orientation="vertical" />
 
         <Button
-            android:id="@+id/button_clear_history"
+            android:id="@+id/clearHistoryButton"
             android:layout_margin="24dp"
             android:background="@drawable/button_refresh"
             android:text="@string/clear_history"

@@ -1,6 +1,5 @@
-package com.example.playlistmaker.presentation.ui.player
+package com.example.playlistmaker.player.ui
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,12 +15,11 @@ import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
-import androidx.core.net.toUri
 import com.example.playlistmaker.R
-import com.example.playlistmaker.data.repository.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.domain.api.AudioPlayerInteractor
-import com.example.playlistmaker.domain.impl.AudioPlayerInteractorImpl
-import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.AudioPlayerInteractor
+import com.example.playlistmaker.player.domain.AudioPlayerInteractorImpl
+import com.example.playlistmaker.search.domain.Track
 
 class AudioPlayerActivity : AppCompatActivity() {
 

@@ -2,18 +2,18 @@ package com.example.playlistmaker.creator
 
 import android.content.Context
 import com.example.playlistmaker.data.network.RetrofitNetworkClient
-import com.example.playlistmaker.data.network.TracksRepositoryImpl
+import com.example.playlistmaker.search.data.TracksRepositoryImpl
 import com.example.playlistmaker.data.repository.SearchHistoryRepositoryImpl
-import com.example.playlistmaker.data.repository.ThemeRepositoryImpl
+import com.example.playlistmaker.settings.data.ThemeRepositoryImpl
 import com.example.playlistmaker.domain.api.SearchHistoryInteractor
-import com.example.playlistmaker.domain.api.ThemeRepository
-import com.example.playlistmaker.domain.api.TracksInteractor
-import com.example.playlistmaker.domain.api.TracksRepository
+import com.example.playlistmaker.settings.domain.ThemeRepository
+import com.example.playlistmaker.search.domain.TracksInteractor
+import com.example.playlistmaker.search.domain.TracksRepository
 import com.example.playlistmaker.domain.impl.SearchHistoryInteractorImpl
-import com.example.playlistmaker.domain.impl.TracksInteractorImpl
+import com.example.playlistmaker.search.domain.TracksInteractorImpl
 import com.example.playlistmaker.domain.use_case.FilterTracksUseCase
-import com.example.playlistmaker.domain.use_case.GetCurrentThemeUseCase
-import com.example.playlistmaker.domain.use_case.SwitchThemeUseCase
+import com.example.playlistmaker.settings.domain.GetCurrentThemeUseCase
+import com.example.playlistmaker.settings.domain.SwitchThemeUseCase
 import com.example.playlistmaker.domain.use_case.impl.FilterTracksUseCaseImpl
 
 object Creator {

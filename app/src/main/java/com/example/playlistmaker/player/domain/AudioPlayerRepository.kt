@@ -1,6 +1,6 @@
-package com.example.playlistmaker.domain.api
+package com.example.playlistmaker.player.domain
 
-interface AudioPlayerInteractor {
+interface AudioPlayerRepository {
     fun prepare(url: String, onPrepared: () -> Unit, onComplete: () -> Unit)
     fun play()
     fun pause()

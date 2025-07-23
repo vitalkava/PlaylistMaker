@@ -1,6 +1,4 @@
-package com.example.playlistmaker.domain.use_case
-
-import com.example.playlistmaker.domain.api.ThemeRepository
+package com.example.playlistmaker.settings.domain
 
 class GetCurrentThemeUseCase(private val repository: ThemeRepository) {
 
