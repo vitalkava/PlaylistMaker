@@ -1,24 +1,29 @@
-package com.example.playlistmaker.presentation.ui.settings
+package com.example.playlistmaker.settings.ui
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.net.toUri
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
-import com.example.playlistmaker.settings.domain.GetCurrentThemeUseCase
-import com.example.playlistmaker.settings.domain.SwitchThemeUseCase
-
-private lateinit var switchThemeUseCase: SwitchThemeUseCase
-private lateinit var getCurrentThemeUseCase: GetCurrentThemeUseCase
+import com.example.playlistmaker.presentation.ui.settings.App
 
 class SettingsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySettingsBinding
+
+    private val viewModel: SettingsViewModel by viewModels {
+        SettingsViewModelFactory(
+            Creator.provideGetCurrentThemeUseCase(this),
+            Creator.provideSwitchThemeUseCase(this)
+        )
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
@@ -31,49 +36,46 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        switchThemeUseCase = Creator.provideSwitchThemeUseCase(context = this)
-        getCurrentThemeUseCase = Creator.provideGetCurrentThemeUseCase(context = this)
-
         binding.buttonBack.setOnClickListener {
             finish()
         }
 
-        binding.themeSwitcher.isChecked = getCurrentThemeUseCase.execute()
+        viewModel.isDarkTheme.observe(this) { isDark ->
+            binding.themeSwitcher.isChecked = isDark
+        }
+
         binding.themeSwitcher.setOnCheckedChangeListener { _, isChecked ->
-            switchThemeUseCase.execute(isChecked)
+            viewModel.toggleTheme(isChecked)
             (applicationContext as App).switchTheme(isChecked)
         }
 
         binding.buttonShareApp.setOnClickListener {
-            val sharedText = getString(R.string.shared_text_in_button_share_apk)
-            val titleShareScreen = getString(R.string.title_share_screen_in_button_share_apk)
-            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+            val text = getString(R.string.shared_text_in_button_share_apk)
+            val title = getString(R.string.title_share_screen_in_button_share_apk)
+            val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
-                putExtra(Intent.EXTRA_TEXT, sharedText)
+                putExtra(Intent.EXTRA_TEXT, text)
             }
-            startActivity(Intent.createChooser(/* target = */ shareIntent, /* title = */ titleShareScreen))
+            startActivity(Intent.createChooser(intent, title))
         }
 
-        binding.buttonWriteToSupport.setOnClickListener{
-            val recipientEmail = getString(R.string.recipient_email_in_button_write_to_support)
+        binding.buttonWriteToSupport.setOnClickListener {
+            val email = getString(R.string.recipient_email_in_button_write_to_support)
             val subject = getString(R.string.subject_in_button_write_to_support)
             val message = getString(R.string.message_in_button_write_to_support)
 
-            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                data = "mailto:$recipientEmail".toUri()
+            val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = "mailto:$email".toUri()
                 putExtra(Intent.EXTRA_SUBJECT, subject)
                 putExtra(Intent.EXTRA_TEXT, message)
             }
-            startActivity(emailIntent)
+            startActivity(intent)
         }
 
         binding.buttonArrowForward.setOnClickListener {
             val url = getString(R.string.url_in_button_arrow_forward)
-
-            val arrowForwardIntent = Intent(Intent.ACTION_VIEW).apply {
-                data = url.toUri()
-            }
-            startActivity(arrowForwardIntent)
+            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+            startActivity(intent)
         }
     }
 }
