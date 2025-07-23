@@ -20,8 +20,7 @@ class SearchActivity : AppCompatActivity() {
     private val viewModel: SearchViewModel by viewModels {
         SearchViewModelFactory(
             Creator.provideTracksInteractor(),
-            Creator.provideSearchHistoryInteractor(this),
-            Creator.provideFilterTracksUseCase()
+            Creator.provideSearchHistoryInteractor(this)
         )
     }
 
