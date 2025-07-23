@@ -1,162 +1,81 @@
 package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
+import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.AudioPlayerInteractorImpl
+import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
-import com.example.playlistmaker.R
-import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.player.domain.AudioPlayerInteractor
-import com.example.playlistmaker.player.domain.AudioPlayerInteractorImpl
-import com.example.playlistmaker.search.domain.Track
 
 class AudioPlayerActivity : AppCompatActivity() {
 
-    private lateinit var interactor: AudioPlayerInteractor
-    private lateinit var handler: Handler
+    private lateinit var binding: ActivityAudioPlayerBinding
 
-    private lateinit var playButton: ImageView
-    private lateinit var progressTrack: TextView
-    private lateinit var artWork: ImageView
-
-    private lateinit var trackName: TextView
-    private lateinit var artistName: TextView
-    private lateinit var songDuration: TextView
-    private lateinit var albumName: TextView
-    private lateinit var songYear: TextView
-    private lateinit var songGenre: TextView
-    private lateinit var songCountry: TextView
-
-    private lateinit var track: Track
-
-    private val updateRunnable = object : Runnable {
-        override fun run() {
-            if (interactor.isPlaying()) {
-                val position = interactor.getCurrentPosition()
-                progressTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(position)
-                handler.postDelayed(this, 300)
-            }
-        }
+    private val viewModel: AudioPlayerViewModel by viewModels {
+        PlayerViewModelFactory(
+            AudioPlayerInteractorImpl(
+                MediaPlayerRepositoryImpl(
+                )
+            )
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_audio_player)
-
-        initViews()
-        handler = Handler(Looper.getMainLooper())
-        interactor = AudioPlayerInteractorImpl(MediaPlayerRepositoryImpl())
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { view, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding.buttonBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
 
-        findViewById<Button>(R.id.button_back).setOnClickListener { finish() }
+        val trackJson = intent.getStringExtra("TRACK_DATA")
+        val track = Gson().fromJson(trackJson, Track::class.java)
+        updateUI(track)
 
-        intent.getStringExtra("TRACK_DATA")?.let {
-            track = Gson().fromJson(it, Track::class.java)
-            updateUI(track)
-            preparePlayer(track)
+        viewModel.isPrepared.observe(this) {
+            binding.playButton.isEnabled = it
         }
 
-        playButton.setOnClickListener { togglePlayback() }
-    }
+        viewModel.isPlaying.observe(this) {
+            binding.playButton.setImageResource(
+                if (it) R.drawable.pause_button else R.drawable.play_button
+            )
+        }
 
-    private fun initViews() {
-        playButton = findViewById(R.id.play_button)
-        progressTrack = findViewById(R.id.progress_track)
-        artWork = findViewById(R.id.ivAlbumCard)
+        viewModel.currentPosition.observe(this) { pos ->
+            binding.progressTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(pos)
+        }
 
-        trackName = findViewById(R.id.tvSongName)
-        artistName = findViewById(R.id.tvBandName)
-        songDuration = findViewById(R.id.tvSongDurationValue)
-        albumName = findViewById(R.id.tvAlbumNameValue)
-        songYear = findViewById(R.id.tvSongYearValue)
-        songGenre = findViewById(R.id.tvSongGenreValue)
-        songCountry = findViewById(R.id.tvTrackCountryValue)
+        binding.playButton.setOnClickListener {
+            viewModel.togglePlayPause()
+        }
+
+        viewModel.prepare(track.previewUrl)
     }
 
     private fun updateUI(track: Track) {
-        progressTrack.text = "00:00"
-        trackName.text = track.trackName
-        artistName.text = track.artistName
-        songDuration.text = track.trackTime
-        albumName.text = track.collectionName.takeIf { it.isNotEmpty() } ?: run {
-            albumName.visibility = View.GONE
-            ""
-        }
-        songYear.text = track.releaseDate.take(4)
-        songGenre.text = track.primaryGenreName
-        songCountry.text = track.country
+        binding.tvSongName.text = track.trackName
+        binding.tvBandName.text = track.artistName
+        binding.tvSongDurationValue.text = track.trackTime
+        binding.tvAlbumNameValue.text = track.collectionName
+        binding.tvSongYearValue.text = track.releaseDate.take(4)
+        binding.tvSongGenreValue.text = track.primaryGenreName
+        binding.tvTrackCountryValue.text = track.country
 
         val artworkUrl = track.artworkUrl100.replaceAfterLast("/", "512x512bb.jpg")
         Glide.with(this)
             .load(artworkUrl)
             .placeholder(R.drawable.album_card_312dp)
-            .into(artWork)
-    }
+            .into(binding.ivAlbumCard)
 
-    private fun preparePlayer(track: Track) {
-        interactor.prepare(
-            url = track.previewUrl,
-            onPrepared = {
-                playButton.isEnabled = true
-            },
-            onComplete = {
-                playButton.setImageResource(R.drawable.play_button)
-                progressTrack.text = "00:00"
-                stopUpdatingProgress()
-            }
-        )
-    }
-
-    private fun togglePlayback() {
-        if (interactor.isPlaying()) {
-            interactor.pause()
-            playButton.setImageResource(R.drawable.play_button)
-            stopUpdatingProgress()
-        } else {
-            interactor.play()
-            playButton.setImageResource(R.drawable.pause_button)
-            startUpdatingProgress()
-        }
-    }
-
-    private fun startUpdatingProgress() {
-        handler.post(updateRunnable)
-    }
-
-    private fun stopUpdatingProgress() {
-        handler.removeCallbacks(updateRunnable)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (interactor.isPlaying()) {
-            interactor.pause()
-            playButton.setImageResource(R.drawable.play_button)
-        }
-        stopUpdatingProgress()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        interactor.release()
-        stopUpdatingProgress()
+        binding.progressTrack.text = "00:00"
+        binding.playButton.isEnabled = false
     }
 }

@@ -33,6 +33,10 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.buttonBack.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         binding.searchResults.layoutManager = LinearLayoutManager(this)
         binding.searchResults.adapter = adapter
 
