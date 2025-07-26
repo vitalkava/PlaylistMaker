@@ -2,7 +2,7 @@ package com.example.playlistmaker.search.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.playlistmaker.domain.api.SearchHistoryInteractor
+import com.example.playlistmaker.search.domain.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.TracksInteractor
 
 class SearchViewModelFactory(

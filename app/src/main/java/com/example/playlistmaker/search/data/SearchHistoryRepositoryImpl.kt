@@ -1,12 +1,13 @@
-package com.example.playlistmaker.data.repository
+package com.example.playlistmaker.search.data
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.domain.api.SearchHistoryRepository
+import com.example.playlistmaker.search.domain.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 
 class SearchHistoryRepositoryImpl(
-    private val sharedPreferences: SharedPreferences): SearchHistoryRepository {
+    private val sharedPreferences: SharedPreferences
+): SearchHistoryRepository {
 
     private val gson = Gson()
 

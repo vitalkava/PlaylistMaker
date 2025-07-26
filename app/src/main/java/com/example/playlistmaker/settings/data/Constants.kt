@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation.ui.settings
+package com.example.playlistmaker.settings.data
 
 object Constants {
     const val SETTINGS_KEY = "SETTINGS"

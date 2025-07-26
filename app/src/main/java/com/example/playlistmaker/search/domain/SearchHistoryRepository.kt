@@ -1,6 +1,4 @@
-package com.example.playlistmaker.domain.api
-
-import com.example.playlistmaker.search.domain.Track
+package com.example.playlistmaker.search.domain
 
 interface SearchHistoryRepository {
 

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.presentation.ui.tracks
+package com.example.playlistmaker.search.ui
 
 import android.content.Context
 import android.text.TextUtils

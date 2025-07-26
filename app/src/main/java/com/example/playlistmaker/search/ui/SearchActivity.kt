@@ -11,7 +11,6 @@ import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
-import com.example.playlistmaker.presentation.ui.tracks.SearchAdapter
 import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
