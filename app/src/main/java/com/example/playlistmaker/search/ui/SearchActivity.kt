@@ -9,8 +9,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
-import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
+import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 
 class SearchActivity : AppCompatActivity() {
@@ -23,8 +23,8 @@ class SearchActivity : AppCompatActivity() {
         )
     }
 
-    private val adapter = SearchAdapter { onTrackSelected(it) }
-    private val historyAdapter = SearchAdapter { onTrackSelected(it) }
+    private val adapter = SearchAdapter(::onTrackSelected)
+    private val historyAdapter = SearchAdapter(::onTrackSelected)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,33 +41,59 @@ class SearchActivity : AppCompatActivity() {
         binding.searchHistoryResults.layoutManager = LinearLayoutManager(this)
         binding.searchHistoryResults.adapter = historyAdapter
 
-        viewModel.searchResults.observe(this) { list ->
-            adapter.updateData(list)
-            binding.searchResults.isVisible = list.isNotEmpty()
-            binding.noResults.isVisible =
-                list.isEmpty() && !binding.searchInput.text.isNullOrEmpty()
-        }
-        viewModel.history.observe(this) { list ->
-            historyAdapter.updateData(list)
-            binding.searchHistory.isVisible =
-                list.isNotEmpty() && binding.searchInput.text.isEmpty()
-        }
-        viewModel.isLoading.observe(this) {
-            binding.progressBar.isVisible = it
-        }
-        viewModel.errorMessage.observe(this) { msg ->
-            binding.noResults.isVisible = msg == "nothing_found"
-            binding.noInternet.isVisible = msg == "no_internet"
+        viewModel.screenState.observe(this) { state ->
+            when (state) {
+                is SearchScreenState.Loading -> {
+                    binding.progressBar.isVisible = true
+                    binding.searchResults.isVisible = false
+                    binding.searchHistory.isVisible = false
+                    binding.noResults.isVisible = false
+                    binding.noInternet.isVisible = false
+                }
+                is SearchScreenState.SearchResults -> {
+                    adapter.updateData(state.tracks)
+                    binding.searchResults.isVisible = true
+                    binding.searchHistory.isVisible = false
+                    binding.noResults.isVisible = false
+                    binding.noInternet.isVisible = false
+                    binding.progressBar.isVisible = false
+                }
+                is SearchScreenState.History -> {
+                    historyAdapter.updateData(state.tracks)
+                    binding.searchHistory.isVisible = true
+                    binding.searchResults.isVisible = false
+                    binding.noResults.isVisible = false
+                    binding.noInternet.isVisible = false
+                    binding.progressBar.isVisible = false
+                }
+                is SearchScreenState.NoResults -> {
+                    binding.noResults.isVisible = true
+                    binding.searchResults.isVisible = false
+                    binding.searchHistory.isVisible = false
+                    binding.noInternet.isVisible = false
+                    binding.progressBar.isVisible = false
+                }
+                is SearchScreenState.NoInternet -> {
+                    binding.noInternet.isVisible = true
+                    binding.searchResults.isVisible = false
+                    binding.searchHistory.isVisible = false
+                    binding.noResults.isVisible = false
+                    binding.progressBar.isVisible = false
+                }
+                is SearchScreenState.Empty -> {
+                    binding.searchResults.isVisible = false
+                    binding.searchHistory.isVisible = false
+                    binding.noResults.isVisible = false
+                    binding.noInternet.isVisible = false
+                    binding.progressBar.isVisible = false
+                }
+            }
         }
 
         binding.searchInput.addTextChangedListener { s: CharSequence? ->
             val text = s.toString()
             viewModel.onQueryChanged(text)
-
             binding.clearIcon.isVisible = text.isNotEmpty()
-
-            binding.searchHistory.isVisible =
-                viewModel.history.value?.isNotEmpty() == true && text.isEmpty()
         }
 
         binding.clearIcon.setOnClickListener {
@@ -79,14 +105,18 @@ class SearchActivity : AppCompatActivity() {
             viewModel.clearHistory()
         }
 
-        viewModel.loadHistory()
-
         binding.buttonRefresh.setOnClickListener {
-            val currentText = binding.searchInput.text?.toString().orEmpty()
-            if (currentText.isNotBlank()) {
-                viewModel.retrySearch()
-            }
+            viewModel.retrySearch()
         }
+
+        val currentText = savedInstanceState?.getString("SEARCH_QUERY") ?: binding.searchInput.text?.toString().orEmpty()
+        binding.searchInput.setText(currentText)
+        viewModel.onQueryChanged(currentText)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("SEARCH_QUERY", binding.searchInput.text?.toString())
     }
 
     private fun onTrackSelected(track: Track) {

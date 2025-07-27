@@ -6,24 +6,16 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
-import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
-import com.example.playlistmaker.player.domain.AudioPlayerInteractorImpl
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityAudioPlayerBinding
 
     private val viewModel: AudioPlayerViewModel by viewModels {
-        PlayerViewModelFactory(
-            AudioPlayerInteractorImpl(
-                MediaPlayerRepositoryImpl(
-                )
-            )
-        )
+        PlayerViewModelFactory()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,18 +31,12 @@ class AudioPlayerActivity : AppCompatActivity() {
         val track = Gson().fromJson(trackJson, Track::class.java)
         updateUI(track)
 
-        viewModel.isPrepared.observe(this) {
-            binding.playButton.isEnabled = it
-        }
-
-        viewModel.isPlaying.observe(this) {
+        viewModel.screenState.observe(this) { state ->
+            binding.playButton.isEnabled = state.playerState != PlayerState.PREPARING
             binding.playButton.setImageResource(
-                if (it) R.drawable.pause_button else R.drawable.play_button
+                if (state.playerState == PlayerState.PLAYING) R.drawable.pause_button else R.drawable.play_button
             )
-        }
-
-        viewModel.currentPosition.observe(this) { pos ->
-            binding.progressTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(pos)
+            binding.progressTrack.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(state.currentPosition)
         }
 
         binding.playButton.setOnClickListener {

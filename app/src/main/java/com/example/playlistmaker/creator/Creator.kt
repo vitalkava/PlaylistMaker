@@ -1,6 +1,10 @@
 package com.example.playlistmaker.creator
 
 import android.content.Context
+import android.media.MediaPlayer
+import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.AudioPlayerInteractor
+import com.example.playlistmaker.player.domain.AudioPlayerInteractorImpl
 import com.example.playlistmaker.search.data.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.domain.SearchHistoryInteractor
@@ -40,5 +44,9 @@ object Creator {
 
     fun provideGetCurrentThemeUseCase(context: Context): GetCurrentThemeUseCase {
         return GetCurrentThemeUseCase(provideThemeRepository(context))
+    }
+
+    fun provideAudioPlayerInteractor(): AudioPlayerInteractor {
+        return AudioPlayerInteractorImpl(MediaPlayerRepositoryImpl(MediaPlayer()))
     }
 }

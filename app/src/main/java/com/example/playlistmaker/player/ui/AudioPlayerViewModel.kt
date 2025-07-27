@@ -7,6 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.player.domain.AudioPlayerInteractor
 
+enum class PlayerState {
+    PREPARING, PLAYING, PAUSED, COMPLETED
+}
+
+data class AudioPlayerScreenState(
+    val playerState: PlayerState,
+    val currentPosition: Int
+)
+
 class AudioPlayerViewModel(
     private val audioInteractor: AudioPlayerInteractor
 ) : ViewModel() {
@@ -15,40 +24,40 @@ class AudioPlayerViewModel(
     private val updateRunnable = object : Runnable {
         override fun run() {
             if (audioInteractor.isPlaying()) {
-                _currentPosition.postValue(audioInteractor.getCurrentPosition())
+                _screenState.postValue(
+                    AudioPlayerScreenState(PlayerState.PLAYING, audioInteractor.getCurrentPosition())
+                )
                 handler.postDelayed(this, 300)
             }
         }
     }
 
-    private val _isPrepared = MutableLiveData(false)
-    val isPrepared: LiveData<Boolean> = _isPrepared
-
-    private val _isPlaying = MutableLiveData(false)
-    val isPlaying: LiveData<Boolean> = _isPlaying
-
-    private val _currentPosition = MutableLiveData(0)
-    val currentPosition: LiveData<Int> = _currentPosition
+    private val _screenState = MutableLiveData(AudioPlayerScreenState(PlayerState.PREPARING, 0))
+    val screenState: LiveData<AudioPlayerScreenState> = _screenState
 
     fun prepare(url: String) {
+        _screenState.postValue(AudioPlayerScreenState(PlayerState.PREPARING, 0))
         audioInteractor.prepare(url, {
-            _isPrepared.postValue(true)
+            _screenState.postValue(AudioPlayerScreenState(PlayerState.PAUSED, 0))
         }, {
-            _isPlaying.postValue(false)
-            _currentPosition.postValue(0)
+            _screenState.postValue(AudioPlayerScreenState(PlayerState.COMPLETED, 0))
             stopProgressUpdates()
         })
     }
 
     fun togglePlayPause() {
-        if (audioInteractor.isPlaying()) {
-            audioInteractor.pause()
-            _isPlaying.postValue(false)
-            stopProgressUpdates()
-        } else {
-            audioInteractor.play()
-            _isPlaying.postValue(true)
-            startProgressUpdates()
+        when (_screenState.value?.playerState) {
+            PlayerState.PLAYING -> {
+                audioInteractor.pause()
+                _screenState.postValue(AudioPlayerScreenState(PlayerState.PAUSED, _screenState.value!!.currentPosition))
+                stopProgressUpdates()
+            }
+            PlayerState.PAUSED -> {
+                audioInteractor.play()
+                _screenState.postValue(AudioPlayerScreenState(PlayerState.PLAYING, _screenState.value!!.currentPosition))
+                startProgressUpdates()
+            }
+            else -> Unit
         }
     }
 
