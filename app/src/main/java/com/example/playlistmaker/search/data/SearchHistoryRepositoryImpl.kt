@@ -7,7 +7,7 @@ import com.google.gson.Gson
 
 class SearchHistoryRepositoryImpl(
     private val sharedPreferences: SharedPreferences
-): SearchHistoryRepository {
+) : SearchHistoryRepository {
 
     private val gson = Gson()
 
@@ -36,7 +36,7 @@ class SearchHistoryRepositoryImpl(
         sharedPreferences.edit().remove(SEARCH_HISTORY_KEY).apply()
     }
 
-    companion object{
+    companion object {
         private const val SEARCH_HISTORY_KEY = "search_history"
         private const val MAX_HISTORY_SIZE = 10
     }

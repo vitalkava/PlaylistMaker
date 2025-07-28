@@ -42,50 +42,22 @@ class SearchActivity : AppCompatActivity() {
         binding.searchHistoryResults.adapter = historyAdapter
 
         viewModel.screenState.observe(this) { state ->
-            when (state) {
-                is SearchScreenState.Loading -> {
-                    binding.progressBar.isVisible = true
-                    binding.searchResults.isVisible = false
-                    binding.searchHistory.isVisible = false
-                    binding.noResults.isVisible = false
-                    binding.noInternet.isVisible = false
-                }
-                is SearchScreenState.SearchResults -> {
-                    adapter.updateData(state.tracks)
-                    binding.searchResults.isVisible = true
-                    binding.searchHistory.isVisible = false
-                    binding.noResults.isVisible = false
-                    binding.noInternet.isVisible = false
-                    binding.progressBar.isVisible = false
-                }
-                is SearchScreenState.History -> {
+            binding.progressBar.isVisible = state.isLoading
+            if (state.isLoading) {
+                binding.searchResults.isVisible = false
+                binding.searchHistory.isVisible = false
+                binding.noResults.isVisible = false
+                binding.noInternet.isVisible = false
+            } else {
+                binding.searchResults.isVisible = state.tracks.isNotEmpty() && !state.isHistoryVisible
+                binding.searchHistory.isVisible = state.isHistoryVisible
+                binding.noResults.isVisible = state.isNoResultsVisible
+                binding.noInternet.isVisible = state.isNoInternetVisible
+
+                if (state.isHistoryVisible) {
                     historyAdapter.updateData(state.tracks)
-                    binding.searchHistory.isVisible = true
-                    binding.searchResults.isVisible = false
-                    binding.noResults.isVisible = false
-                    binding.noInternet.isVisible = false
-                    binding.progressBar.isVisible = false
-                }
-                is SearchScreenState.NoResults -> {
-                    binding.noResults.isVisible = true
-                    binding.searchResults.isVisible = false
-                    binding.searchHistory.isVisible = false
-                    binding.noInternet.isVisible = false
-                    binding.progressBar.isVisible = false
-                }
-                is SearchScreenState.NoInternet -> {
-                    binding.noInternet.isVisible = true
-                    binding.searchResults.isVisible = false
-                    binding.searchHistory.isVisible = false
-                    binding.noResults.isVisible = false
-                    binding.progressBar.isVisible = false
-                }
-                is SearchScreenState.Empty -> {
-                    binding.searchResults.isVisible = false
-                    binding.searchHistory.isVisible = false
-                    binding.noResults.isVisible = false
-                    binding.noInternet.isVisible = false
-                    binding.progressBar.isVisible = false
+                } else {
+                    adapter.updateData(state.tracks)
                 }
             }
         }

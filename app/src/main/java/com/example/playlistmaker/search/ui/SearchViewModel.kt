@@ -10,14 +10,14 @@ import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TracksInteractor
 import java.util.concurrent.Executors
 
-sealed class SearchScreenState {
-    data object Loading : SearchScreenState()
-    data class SearchResults(val tracks: List<Track>) : SearchScreenState()
-    data class History(val tracks: List<Track>) : SearchScreenState()
-    data object NoResults : SearchScreenState()
-    data object NoInternet : SearchScreenState()
-    data object Empty : SearchScreenState()
-}
+data class SearchScreenState(
+    val query: String = "",
+    val isLoading: Boolean = false,
+    val tracks: List<Track> = emptyList(),
+    val isHistoryVisible: Boolean = false,
+    val isNoResultsVisible: Boolean = false,
+    val isNoInternetVisible: Boolean = false
+)
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -27,51 +27,61 @@ class SearchViewModel(
     private val executor = Executors.newSingleThreadExecutor()
     private val handler = Handler(Looper.getMainLooper())
 
-    private val _screenState = MutableLiveData<SearchScreenState>(SearchScreenState.Empty)
+    private val _screenState = MutableLiveData(SearchScreenState())
     val screenState: LiveData<SearchScreenState> = _screenState
 
-    private var currentQuery = ""
-    private var lastQuery = ""
-    private var lastSearchResults: List<Track>? = null
+    init {
+        loadHistory()
+    }
 
     fun onQueryChanged(text: String) {
-        currentQuery = text.trim()
+        val newQuery = text.trim()
+        if (newQuery == _screenState.value?.query) {
+            return
+        }
+
+        _screenState.postValue(_screenState.value?.copy(query = newQuery))
+
         handler.removeCallbacks(searchDebounceRunnable)
-        if (currentQuery.isEmpty()) {
-            lastQuery = ""
-            lastSearchResults = null
+        if (newQuery.isEmpty()) {
             loadHistory()
         } else {
-            if (currentQuery == lastQuery && lastSearchResults != null) {
-                _screenState.postValue(SearchScreenState.SearchResults(lastSearchResults!!))
-            } else {
-                handler.postDelayed(searchDebounceRunnable, 1000)
-            }
+            handler.postDelayed(searchDebounceRunnable, 1000)
         }
     }
 
     private val searchDebounceRunnable = Runnable {
-        performSearchInternal(currentQuery)
+        performSearchInternal()
     }
 
-    private fun performSearchInternal(query: String) {
-        _screenState.postValue(SearchScreenState.Loading)
-        lastQuery = query
-        lastSearchResults = null
+    private fun performSearchInternal() {
+        val query = _screenState.value?.query ?: return
+        _screenState.postValue(_screenState.value?.copy(isLoading = true))
+
         executor.execute {
             tracksInteractor.searchTracks(query, object : TracksInteractor.TracksConsumer {
                 override fun consume(found: List<Track>) {
-                    lastSearchResults = found
-                    if (found.isEmpty()) {
-                        _screenState.postValue(SearchScreenState.NoResults)
-                    } else {
-                        _screenState.postValue(SearchScreenState.SearchResults(found))
-                    }
+                    _screenState.postValue(
+                        _screenState.value?.copy(
+                            isLoading = false,
+                            tracks = found,
+                            isHistoryVisible = false,
+                            isNoResultsVisible = found.isEmpty(),
+                            isNoInternetVisible = false
+                        )
+                    )
                 }
 
                 override fun onError(error: Throwable) {
-                    lastSearchResults = null
-                    _screenState.postValue(SearchScreenState.NoInternet)
+                    _screenState.postValue(
+                        _screenState.value?.copy(
+                            isLoading = false,
+                            tracks = emptyList(),
+                            isHistoryVisible = false,
+                            isNoResultsVisible = false,
+                            isNoInternetVisible = true
+                        )
+                    )
                 }
             })
         }
@@ -86,28 +96,35 @@ class SearchViewModel(
     fun loadHistory() {
         executor.execute {
             val history = searchHistoryInteractor.getHistory()
-            if (history.isNotEmpty() && currentQuery.isEmpty()) {
-                _screenState.postValue(SearchScreenState.History(history))
-            } else if (currentQuery.isNotEmpty() && lastSearchResults != null) {
-                _screenState.postValue(SearchScreenState.SearchResults(lastSearchResults!!))
-            } else {
-                _screenState.postValue(SearchScreenState.Empty)
-            }
+            _screenState.postValue(
+                _screenState.value?.copy(
+                    isLoading = false,
+                    tracks = if (_screenState.value?.query.isNullOrEmpty()) history else emptyList(),
+                    isHistoryVisible = history.isNotEmpty() && _screenState.value?.query.isNullOrEmpty(),
+                    isNoResultsVisible = false,
+                    isNoInternetVisible = false
+                )
+            )
         }
     }
 
     fun clearHistory() {
         executor.execute {
             searchHistoryInteractor.clearHistory()
-            if (currentQuery.isEmpty()) {
-                _screenState.postValue(SearchScreenState.Empty)
+            if (_screenState.value?.query.isNullOrEmpty()) {
+                _screenState.postValue(
+                    _screenState.value?.copy(
+                        tracks = emptyList(),
+                        isHistoryVisible = false
+                    )
+                )
             }
         }
     }
 
     fun retrySearch() {
-        if (currentQuery.isNotBlank()) {
-            performSearchInternal(currentQuery)
+        if (_screenState.value?.query?.isNotBlank() == true) {
+            performSearchInternal()
         }
     }
 

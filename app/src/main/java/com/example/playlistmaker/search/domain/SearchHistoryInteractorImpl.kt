@@ -1,7 +1,5 @@
 package com.example.playlistmaker.search.domain
 
-import com.example.playlistmaker.search.domain.SearchHistoryRepository
-
 class SearchHistoryInteractorImpl(private val repository: SearchHistoryRepository): SearchHistoryInteractor {
 
     override fun saveTrack(track: Track) {
