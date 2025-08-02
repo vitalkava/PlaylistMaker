@@ -2,7 +2,6 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.media.MediaPlayer
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.AudioPlayerInteractor
 import com.example.playlistmaker.player.domain.AudioPlayerInteractorImpl
@@ -65,7 +64,7 @@ val dataModule = module {
 
     single<TracksRepository> { TracksRepositoryImpl(get()) }
 
-    single<AudioPlayerRepository> { MediaPlayerRepositoryImpl(MediaPlayer()) }
+    single<AudioPlayerRepository> { MediaPlayerRepositoryImpl() }
 }
 
 val domainModule = module {
