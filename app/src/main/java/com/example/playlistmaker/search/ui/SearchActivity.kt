@@ -2,26 +2,19 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-
-    private val viewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(
-            Creator.provideTracksInteractor(),
-            Creator.provideSearchHistoryInteractor(this)
-        )
-    }
+    private val viewModel: SearchViewModel by viewModel()
 
     private val adapter = SearchAdapter(::onTrackSelected)
     private val historyAdapter = SearchAdapter(::onTrackSelected)
