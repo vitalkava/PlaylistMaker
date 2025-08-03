@@ -3,13 +3,15 @@ package com.example.playlistmaker.player.data
 import android.media.MediaPlayer
 import com.example.playlistmaker.player.domain.AudioPlayerRepository
 
-class MediaPlayerRepositoryImpl : AudioPlayerRepository {
+class MediaPlayerRepositoryImpl(
+    private val mediaPlayerFactory: MediaPlayerFactory
+) : AudioPlayerRepository {
     private var mediaPlayer: MediaPlayer? = null
 
     override fun prepare(url: String, onPrepared: () -> Unit, onComplete: () -> Unit) {
         try {
             mediaPlayer?.release()
-            mediaPlayer = MediaPlayer().apply {
+            mediaPlayer = mediaPlayerFactory.create().apply {
                 setDataSource(url)
                 prepareAsync()
                 setOnPreparedListener { onPrepared() }

@@ -12,14 +12,14 @@ import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private val viewModel: SearchViewModel by viewModel()
     private val gson: Gson by inject()
-
-    private val adapter = SearchAdapter(::onTrackSelected)
-    private val historyAdapter = SearchAdapter(::onTrackSelected)
+    private val adapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
+    private val historyAdapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.player.domain.AudioPlayerInteractor
+import com.example.playlistmaker.settings.ui.HandlerFactory
 
 enum class PlayerState {
     PREPARING, PLAYING, PAUSED, COMPLETED
@@ -17,10 +18,11 @@ data class AudioPlayerScreenState(
 )
 
 class AudioPlayerViewModel(
-    private val audioInteractor: AudioPlayerInteractor
+    private val audioInteractor: AudioPlayerInteractor,
+    private val handlerFactory: HandlerFactory
 ) : ViewModel() {
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val handler = handlerFactory.createMainHandler()
     private val updateRunnable = object : Runnable {
         override fun run() {
             if (audioInteractor.isPlaying()) {
