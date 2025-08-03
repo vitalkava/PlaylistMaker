@@ -11,8 +11,10 @@ import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.data.TracksRepositoryImpl
+import com.example.playlistmaker.search.data.iTunesApi
 import com.example.playlistmaker.search.domain.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.SearchHistoryInteractorImpl
+import com.example.playlistmaker.search.domain.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.TracksInteractor
 import com.example.playlistmaker.search.domain.TracksInteractorImpl
 import com.example.playlistmaker.search.domain.TracksRepository
@@ -52,14 +54,14 @@ val dataModule = module {
     }
 
     single {
-        get<Retrofit>().create(com.example.playlistmaker.search.data.iTunesApi::class.java)
+        get<Retrofit>().create(iTunesApi::class.java)
     }
 
     single<NetworkClient> { RetrofitNetworkClient }
 
     single<ThemeRepository> { ThemeRepositoryImpl(get(SETTINGS_PREFS)) }
 
-    single<com.example.playlistmaker.search.domain.SearchHistoryRepository> {
+    single<SearchHistoryRepository> {
         SearchHistoryRepositoryImpl(get(PLAYLIST_PREFS))
     }
 
