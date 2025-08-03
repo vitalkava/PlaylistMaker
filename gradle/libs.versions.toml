@@ -11,6 +11,9 @@ activity = "1.10.0"
 constraintlayout = "2.2.0"
 retrofit = "2.9.0"
 gson = "2.9.0"
+androidx-lifecycle = "2.5.1"
+androidx-activity = "1.6.1"
+koin = "3.3.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -25,6 +28,10 @@ glide = { module = "com.github.bumptech.glide:glide", version = "4.15.1" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version = "4.15.1" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 gson-converter = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "gson" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "androidx-lifecycle" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
+androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "androidx-activity" }
+koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
