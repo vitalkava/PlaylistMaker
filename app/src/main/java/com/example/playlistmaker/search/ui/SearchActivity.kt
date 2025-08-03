@@ -10,11 +10,13 @@ import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
+import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private val viewModel: SearchViewModel by viewModel()
+    private val gson: Gson by inject()
 
     private val adapter = SearchAdapter(::onTrackSelected)
     private val historyAdapter = SearchAdapter(::onTrackSelected)
@@ -88,7 +90,7 @@ class SearchActivity : AppCompatActivity() {
         viewModel.saveTrackToHistory(track)
         startActivity(
             Intent(this, AudioPlayerActivity::class.java).apply {
-                putExtra("TRACK_DATA", Gson().toJson(track))
+                putExtra("TRACK_DATA", gson.toJson(track))
             }
         )
     }

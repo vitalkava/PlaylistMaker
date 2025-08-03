@@ -4,12 +4,14 @@ import android.content.SharedPreferences
 import com.example.playlistmaker.search.domain.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 class SearchHistoryRepositoryImpl(
     private val sharedPreferences: SharedPreferences
-) : SearchHistoryRepository {
+) : SearchHistoryRepository, KoinComponent {
 
-    private val gson = Gson()
+    private val gson: Gson by inject()
 
     override fun saveTrack(track: Track) {
         val trackList = getHistory().toMutableList()

@@ -22,6 +22,7 @@ import com.example.playlistmaker.settings.domain.GetCurrentThemeUseCase
 import com.example.playlistmaker.settings.domain.SwitchThemeUseCase
 import com.example.playlistmaker.settings.domain.ThemeRepository
 import com.example.playlistmaker.settings.ui.SettingsViewModel
+import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.qualifier.named
@@ -65,6 +66,8 @@ val dataModule = module {
     single<TracksRepository> { TracksRepositoryImpl(get()) }
 
     single<AudioPlayerRepository> { MediaPlayerRepositoryImpl() }
+
+    single { Gson() }
 }
 
 val domainModule = module {
