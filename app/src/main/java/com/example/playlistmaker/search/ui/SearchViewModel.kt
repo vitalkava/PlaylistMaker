@@ -1,14 +1,15 @@
 package com.example.playlistmaker.search.ui
 
 import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.search.domain.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TracksInteractor
-import java.util.concurrent.Executors
+import com.example.playlistmaker.settings.ui.ExecutorFactory
+import com.example.playlistmaker.settings.ui.HandlerFactory
+import java.util.concurrent.ExecutorService
 
 data class SearchScreenState(
     val query: String = "",
@@ -21,14 +22,16 @@ data class SearchScreenState(
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
-    private val searchHistoryInteractor: SearchHistoryInteractor
+    private val searchHistoryInteractor: SearchHistoryInteractor,
+    private val executorFactory: ExecutorFactory,
+    private val handlerFactory: HandlerFactory
 ) : ViewModel() {
-
-    private val executor = Executors.newSingleThreadExecutor()
-    private val handler = Handler(Looper.getMainLooper())
-
+    private val executor: ExecutorService = executorFactory.createSingleThreadExecutor()
+    private val handler: Handler = handlerFactory.createMainHandler()
     private val _screenState = MutableLiveData(SearchScreenState())
     val screenState: LiveData<SearchScreenState> = _screenState
+
+    private val searchDebounceRunnable = Runnable { performSearchInternal() }
 
     init {
         loadHistory()
@@ -48,10 +51,6 @@ class SearchViewModel(
         } else {
             handler.postDelayed(searchDebounceRunnable, 1000)
         }
-    }
-
-    private val searchDebounceRunnable = Runnable {
-        performSearchInternal()
     }
 
     private fun performSearchInternal() {

@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.player.domain.AudioPlayerInteractor
+import com.example.playlistmaker.settings.ui.HandlerFactory
 
 enum class PlayerState {
     PREPARING, PLAYING, PAUSED, COMPLETED
@@ -17,15 +18,19 @@ data class AudioPlayerScreenState(
 )
 
 class AudioPlayerViewModel(
-    private val audioInteractor: AudioPlayerInteractor
+    private val audioInteractor: AudioPlayerInteractor,
+    private val handlerFactory: HandlerFactory
 ) : ViewModel() {
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val handler = handlerFactory.createMainHandler()
     private val updateRunnable = object : Runnable {
         override fun run() {
             if (audioInteractor.isPlaying()) {
                 _screenState.postValue(
-                    AudioPlayerScreenState(PlayerState.PLAYING, audioInteractor.getCurrentPosition())
+                    AudioPlayerScreenState(
+                        PlayerState.PLAYING,
+                        audioInteractor.getCurrentPosition()
+                    )
                 )
                 handler.postDelayed(this, 300)
             }
@@ -49,14 +54,28 @@ class AudioPlayerViewModel(
         when (_screenState.value?.playerState) {
             PlayerState.PLAYING -> {
                 audioInteractor.pause()
-                _screenState.postValue(AudioPlayerScreenState(PlayerState.PAUSED, _screenState.value!!.currentPosition))
+                _screenState.postValue(
+                    AudioPlayerScreenState(
+                        PlayerState.PAUSED,
+                        _screenState.value!!.currentPosition
+                    )
+                )
                 stopProgressUpdates()
             }
+
             PlayerState.PAUSED -> {
-                audioInteractor.play()
-                _screenState.postValue(AudioPlayerScreenState(PlayerState.PLAYING, _screenState.value!!.currentPosition))
-                startProgressUpdates()
+                if (!audioInteractor.isPlaying()) {
+                    audioInteractor.play()
+                    _screenState.postValue(
+                        AudioPlayerScreenState(
+                            PlayerState.PLAYING,
+                            _screenState.value!!.currentPosition
+                        )
+                    )
+                    startProgressUpdates()
+                }
             }
+
             else -> Unit
         }
     }

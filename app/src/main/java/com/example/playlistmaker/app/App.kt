@@ -2,19 +2,28 @@ package com.example.playlistmaker.app
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.di.dataModule
+import com.example.playlistmaker.di.domainModule
+import com.example.playlistmaker.di.viewModelModule
 import com.example.playlistmaker.settings.domain.GetCurrentThemeUseCase
 import com.example.playlistmaker.settings.domain.SwitchThemeUseCase
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import org.koin.android.ext.android.inject
 
 class App : Application() {
 
-    private lateinit var switchThemeUseCase: SwitchThemeUseCase
-    private lateinit var getCurrentThemeUseCase: GetCurrentThemeUseCase
+    private val switchThemeUseCase: SwitchThemeUseCase by inject()
+    private val getCurrentThemeUseCase: GetCurrentThemeUseCase by inject()
 
     override fun onCreate() {
         super.onCreate()
-        switchThemeUseCase = Creator.provideSwitchThemeUseCase(this)
-        getCurrentThemeUseCase = Creator.provideGetCurrentThemeUseCase(this)
+
+        startKoin {
+            androidContext(this@App)
+            modules(dataModule, domainModule, viewModelModule)
+        }
+
         val isDarkTheme = getCurrentThemeUseCase.execute()
         switchTheme(isDarkTheme)
     }

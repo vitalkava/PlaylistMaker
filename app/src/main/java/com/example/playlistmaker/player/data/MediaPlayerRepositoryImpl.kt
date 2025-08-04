@@ -3,37 +3,52 @@ package com.example.playlistmaker.player.data
 import android.media.MediaPlayer
 import com.example.playlistmaker.player.domain.AudioPlayerRepository
 
-class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : AudioPlayerRepository {
+class MediaPlayerRepositoryImpl(
+    private val mediaPlayerFactory: MediaPlayerFactory
+) : AudioPlayerRepository {
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun prepare(url: String, onPrepared: () -> Unit, onComplete: () -> Unit) {
-        mediaPlayer.apply {
-            setDataSource(url)
-            prepareAsync()
-            setOnPreparedListener { onPrepared() }
-            setOnCompletionListener {
-                onComplete()
-                reset()
+        try {
+            mediaPlayer?.release()
+            mediaPlayer = mediaPlayerFactory.create().apply {
+                setDataSource(url)
+                prepareAsync()
+                setOnPreparedListener { onPrepared() }
+                setOnCompletionListener {
+                    onComplete()
+                    reset()
+                }
+                setOnErrorListener { _, what, extra ->
+                    reset()
+                    true
+                }
             }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            mediaPlayer?.release()
+            mediaPlayer = null
         }
     }
 
     override fun play() {
-        mediaPlayer.start()
+        mediaPlayer?.takeIf { !it.isPlaying }?.start()
     }
 
     override fun pause() {
-        mediaPlayer.pause()
+        mediaPlayer?.takeIf { it.isPlaying }?.pause()
     }
 
     override fun release() {
-        mediaPlayer.release()
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     override fun isPlaying(): Boolean {
-        return mediaPlayer.isPlaying
+        return mediaPlayer?.isPlaying ?: false
     }
 
     override fun getCurrentPosition(): Int {
-        return mediaPlayer.currentPosition
+        return mediaPlayer?.currentPosition ?: 0
     }
 }

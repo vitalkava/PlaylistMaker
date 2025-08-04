@@ -2,29 +2,24 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
-
-    private val viewModel: SearchViewModel by viewModels {
-        SearchViewModelFactory(
-            Creator.provideTracksInteractor(),
-            Creator.provideSearchHistoryInteractor(this)
-        )
-    }
-
-    private val adapter = SearchAdapter(::onTrackSelected)
-    private val historyAdapter = SearchAdapter(::onTrackSelected)
+    private val viewModel: SearchViewModel by viewModel()
+    private val gson: Gson by inject()
+    private val adapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
+    private val historyAdapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,7 +90,7 @@ class SearchActivity : AppCompatActivity() {
         viewModel.saveTrackToHistory(track)
         startActivity(
             Intent(this, AudioPlayerActivity::class.java).apply {
-                putExtra("TRACK_DATA", Gson().toJson(track))
+                putExtra("TRACK_DATA", gson.toJson(track))
             }
         )
     }
