@@ -2,6 +2,9 @@ package com.example.playlistmaker.di
 
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.playlistmaker.library.ui.favorites.FavoritesViewModel
+import com.example.playlistmaker.library.ui.LibraryViewModel
+import com.example.playlistmaker.library.ui.playlists.PlaylistsViewModel
 import com.example.playlistmaker.player.data.MediaPlayerFactory
 import com.example.playlistmaker.player.data.MediaPlayerFactoryImpl
 import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
@@ -114,4 +117,10 @@ val viewModelModule = module {
         )
     }
     factory { (onTrackClicked: (Track) -> Unit) -> SearchAdapter(onTrackClicked) }
+}
+
+val libraryModule = module {
+    viewModel { LibraryViewModel() }
+    viewModel { PlaylistsViewModel() }
+    viewModel { FavoritesViewModel() }
 }
