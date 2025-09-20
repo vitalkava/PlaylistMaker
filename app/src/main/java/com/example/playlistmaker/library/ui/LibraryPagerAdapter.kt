@@ -12,15 +12,13 @@ class LibraryPagerAdapter(activity: FragmentActivity) : FragmentStateAdapter(act
         private const val TAB_COUNT = 2
     }
 
-    enum class TabType(val position: Int, val fragmentCreator: () -> Fragment) {
-        FAVORITES(0, { FavoritesFragment() }),
-        PLAYLISTS(1, { PlaylistsFragment() })
-    }
-
     override fun getItemCount(): Int = TAB_COUNT
 
     override fun createFragment(position: Int): Fragment {
-        return TabType.entries.find { it.position == position }?.fragmentCreator?.invoke()
-            ?: FavoritesFragment()
+        return when(position) {
+            0 -> FavoritesFragment.newInstance()
+            1 -> PlaylistsFragment.newInstance()
+            else -> FavoritesFragment.newInstance()
+        }
     }
 }

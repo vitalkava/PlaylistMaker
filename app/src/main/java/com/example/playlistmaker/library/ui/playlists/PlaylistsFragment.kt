@@ -7,15 +7,24 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.example.playlistmaker.library.ui.favorites.FavoritesFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
 
     private val viewModel: PlaylistsViewModel by viewModel()
-    private lateinit var binding: FragmentPlaylistsBinding
+    private var _binding: FragmentPlaylistsBinding? = null
+    private val binding get() = _binding!!
+
+
+    companion object {
+        fun newInstance(): PlaylistsFragment {
+            return PlaylistsFragment()
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding = FragmentPlaylistsBinding.inflate(layoutInflater)
+        _binding = FragmentPlaylistsBinding.inflate(layoutInflater)
         val playlists = viewModel.getPlaylists()
         val placeholder = binding.placeholder
 
@@ -28,5 +37,10 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
         binding.buttonNewPlaylist.setOnClickListener {
             // be later
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

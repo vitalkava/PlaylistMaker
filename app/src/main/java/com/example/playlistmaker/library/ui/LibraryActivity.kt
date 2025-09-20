@@ -31,13 +31,5 @@ class LibraryActivity : AppCompatActivity() {
         binding.buttonBack.setOnClickListener {
             finish()
         }
-
-        binding.viewPager.setCurrentItem(viewModel.selectedTab, false)
-
-        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                viewModel.selectedTab = position
-            }
-        })
     }
 }
