@@ -1,21 +1,35 @@
 package com.example.playlistmaker.library.ui
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import androidx.viewpager2.widget.ViewPager2
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.ActivityLibraryBinding
+import com.google.android.material.tabs.TabLayoutMediator
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class LibraryActivity : AppCompatActivity() {
+
+    private val tabTitles = listOf(R.string.favorite_tracks, R.string.playlists)
+    private val viewModel: LibraryViewModel by viewModel()
+    private lateinit var binding: ActivityLibraryBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_library)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        binding = ActivityLibraryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.viewPager.adapter = LibraryPagerAdapter(this)
+
+        TabLayoutMediator(
+            binding.libraryTabLayout,
+            binding.viewPager
+        ) { tab, position ->
+            tab.text = getString(tabTitles[position])
+        }.attach()
+
+        binding.buttonBack.setOnClickListener {
+            finish()
         }
     }
 }

@@ -27,4 +27,10 @@
     <string name="year">Год</string>
     <string name="genre">Жанр</string>
     <string name="country">Краiна</string>
+    <string name="media_library">Медыятэка</string>
+    <string name="library_is_empty">Ваша медыятэка пуста</string>
+    <string name="no_playlists">Вы пакуль не стварылі\nніякіх спісаў прайгравання</string>
+    <string name="new_playlist">Новы плэйлiст</string>
+    <string name="favorite_tracks">Любімыя трэкі</string>
+    <string name="playlists">Плэйлісты</string>
 </resources>
