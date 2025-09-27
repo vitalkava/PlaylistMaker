@@ -2,7 +2,6 @@ package com.example.playlistmaker.library.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.viewpager2.widget.ViewPager2
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityLibraryBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -27,9 +26,5 @@ class LibraryActivity : AppCompatActivity() {
         ) { tab, position ->
             tab.text = getString(tabTitles[position])
         }.attach()
-
-        binding.buttonBack.setOnClickListener {
-            finish()
-        }
     }
 }

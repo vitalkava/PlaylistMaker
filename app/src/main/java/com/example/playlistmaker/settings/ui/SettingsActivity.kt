@@ -29,10 +29,6 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        binding.buttonBack.setOnClickListener {
-            finish()
-        }
-
         viewModel.isDarkTheme.observe(this) { isDark ->
             binding.themeSwitcher.isChecked = isDark
         }
