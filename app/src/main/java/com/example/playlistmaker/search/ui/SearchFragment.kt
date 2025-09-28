@@ -2,11 +2,14 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.AudioPlayerActivity
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
@@ -14,25 +17,33 @@ import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-class SearchActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySearchBinding
+class SearchFragment: Fragment() {
+
+    private lateinit var binding: FragmentSearchBinding
     private val viewModel: SearchViewModel by viewModel()
     private val gson: Gson by inject()
     private val adapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
     private val historyAdapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding.searchResults.layoutManager = LinearLayoutManager(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        binding.searchResults.layoutManager = LinearLayoutManager(requireContext())
         binding.searchResults.adapter = adapter
 
-        binding.searchHistoryResults.layoutManager = LinearLayoutManager(this)
+        binding.searchHistoryResults.layoutManager = LinearLayoutManager(requireContext())
         binding.searchHistoryResults.adapter = historyAdapter
 
-        viewModel.screenState.observe(this) { state ->
+        viewModel.screenState.observe(viewLifecycleOwner) { state ->
             binding.progressBar.isVisible = state.isLoading
             if (state.isLoading) {
                 binding.searchResults.isVisible = false
@@ -77,15 +88,10 @@ class SearchActivity : AppCompatActivity() {
         viewModel.onQueryChanged(currentText)
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("SEARCH_QUERY", binding.searchInput.text?.toString())
-    }
-
     private fun onTrackSelected(track: Track) {
         viewModel.saveTrackToHistory(track)
         startActivity(
-            Intent(this, AudioPlayerActivity::class.java).apply {
+            Intent(requireContext(), AudioPlayerActivity::class.java).apply {
                 putExtra("TRACK_DATA", gson.toJson(track))
             }
         )
