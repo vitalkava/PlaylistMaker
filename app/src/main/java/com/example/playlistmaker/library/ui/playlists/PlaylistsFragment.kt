@@ -16,7 +16,6 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding get() = _binding!!
 
-
     companion object {
         fun newInstance(): PlaylistsFragment {
             return PlaylistsFragment()
