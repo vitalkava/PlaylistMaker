@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.ui
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,8 +8,9 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.AudioPlayerActivity
+import com.example.playlistmaker.player.ui.AudioPlayerFragment
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -90,10 +90,16 @@ class SearchFragment: Fragment() {
 
     private fun onTrackSelected(track: Track) {
         viewModel.saveTrackToHistory(track)
-        startActivity(
-            Intent(requireContext(), AudioPlayerActivity::class.java).apply {
-                putExtra("TRACK_DATA", gson.toJson(track))
-            }
-        )
+        val trackJson = gson.toJson(track)
+        val fragment = AudioPlayerFragment.newInstance(trackJson)
+        requireActivity().supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.rootFragmentContainerView, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 }
