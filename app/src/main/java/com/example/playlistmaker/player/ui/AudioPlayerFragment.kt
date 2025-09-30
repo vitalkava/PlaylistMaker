@@ -18,20 +18,8 @@ import kotlin.getValue
 
 class AudioPlayerFragment : Fragment() {
 
-    companion object {
-        private const val TRACK_DATA = "TRACK_DATA"
-
-        fun newInstance(trackJson: String): AudioPlayerFragment {
-            return AudioPlayerFragment().apply {
-                arguments = Bundle().apply {
-                    putString(TRACK_DATA, trackJson)
-                }
-            }
-        }
-    }
-
-    private lateinit var binding: FragmentAudioPlayerBinding
-
+    private var _binding: FragmentAudioPlayerBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: AudioPlayerViewModel by viewModel()
     private val gson: Gson by inject()
 
@@ -40,7 +28,7 @@ class AudioPlayerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
+        _binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -51,8 +39,7 @@ class AudioPlayerFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
-        val trackJson = arguments?.getString("TRACK_DATA")
-            ?: throw IllegalArgumentException("TRACK_DATA is missing")
+        val trackJson = requireArguments().getString("trackJson")
         val track = gson.fromJson(trackJson, Track::class.java)
         updateUI(track)
 
@@ -70,7 +57,6 @@ class AudioPlayerFragment : Fragment() {
         }
 
         viewModel.prepare(track.previewUrl)
-
     }
 
     private fun updateUI(track: Track) {
@@ -92,12 +78,8 @@ class AudioPlayerFragment : Fragment() {
         binding.playButton.isEnabled = false
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
     }
-
 }

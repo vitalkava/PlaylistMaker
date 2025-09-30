@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
-import com.example.playlistmaker.player.ui.AudioPlayerFragment
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
@@ -19,7 +19,8 @@ import org.koin.core.parameter.parametersOf
 
 class SearchFragment: Fragment() {
 
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: SearchViewModel by viewModel()
     private val gson: Gson by inject()
     private val adapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
@@ -30,7 +31,7 @@ class SearchFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -91,15 +92,20 @@ class SearchFragment: Fragment() {
     private fun onTrackSelected(track: Track) {
         viewModel.saveTrackToHistory(track)
         val trackJson = gson.toJson(track)
-        val fragment = AudioPlayerFragment.newInstance(trackJson)
-        requireActivity().supportFragmentManager
-            .beginTransaction()
-            .replace(R.id.rootFragmentContainerView, fragment)
-            .addToBackStack(null)
-            .commit()
+
+        val bundle = Bundle().apply {
+            putString("trackJson", trackJson)
+        }
+
+        requireActivity()
+            .supportFragmentManager
+            .findFragmentById(R.id.rootFragmentContainerView)
+            ?.findNavController()
+            ?.navigate(R.id.audioPlayerFragment, bundle)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
     }
 }
