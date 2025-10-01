@@ -26,6 +26,11 @@ class SearchFragment: Fragment() {
     private val adapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
     private val historyAdapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
 
+    companion object {
+        private const val SEARCH_QUERY_KEY = "SEARCH_QUERY"
+        private const val TRACK_JSON_KEY = "trackJson"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -84,9 +89,14 @@ class SearchFragment: Fragment() {
             viewModel.retrySearch()
         }
 
-        val currentText = savedInstanceState?.getString("SEARCH_QUERY") ?: binding.searchInput.text?.toString().orEmpty()
+        val currentText = savedInstanceState?.getString(SEARCH_QUERY_KEY) ?: ""
         binding.searchInput.setText(currentText)
         viewModel.onQueryChanged(currentText)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString(SEARCH_QUERY_KEY, binding.searchInput.text?.toString())
     }
 
     private fun onTrackSelected(track: Track) {
@@ -94,7 +104,7 @@ class SearchFragment: Fragment() {
         val trackJson = gson.toJson(track)
 
         val bundle = Bundle().apply {
-            putString("trackJson", trackJson)
+            putString(TRACK_JSON_KEY, trackJson)
         }
 
         requireActivity()
