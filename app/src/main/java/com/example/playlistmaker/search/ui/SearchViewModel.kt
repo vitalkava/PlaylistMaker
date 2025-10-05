@@ -98,7 +98,7 @@ class SearchViewModel(
             _screenState.postValue(
                 _screenState.value?.copy(
                     isLoading = false,
-                    tracks = if (_screenState.value?.query.isNullOrEmpty()) history else emptyList(),
+                    tracks = if (_screenState.value?.query.isNullOrEmpty()) history else _screenState.value?.tracks ?: emptyList(),
                     isHistoryVisible = history.isNotEmpty() && _screenState.value?.query.isNullOrEmpty(),
                     isNoResultsVisible = false,
                     isNoInternetVisible = false
