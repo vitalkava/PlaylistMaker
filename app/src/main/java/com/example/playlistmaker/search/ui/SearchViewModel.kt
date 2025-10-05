@@ -49,18 +49,7 @@ class SearchViewModel(
         if (newQuery.isEmpty()) {
             loadHistory()
         } else {
-            if (_screenState.value?.tracks?.isNotEmpty() == true && _screenState.value?.query == newQuery) {
-                _screenState.postValue(
-                    _screenState.value?.copy(
-                        isLoading = false,
-                        isHistoryVisible = false,
-                        isNoResultsVisible = _screenState.value?.tracks?.isEmpty() ?: false,
-                        isNoInternetVisible = false
-                    )
-                )
-            } else {
-                handler.postDelayed(searchDebounceRunnable, 1000)
-            }
+            handler.postDelayed(searchDebounceRunnable, 1000)
         }
     }
 
