@@ -1,10 +1,5 @@
 package com.example.playlistmaker.search.domain
 
 interface TracksInteractor {
-    fun searchTracks(expression: String, consumer: TracksConsumer)
-
-    interface TracksConsumer {
-        fun consume(foundTracks: List<Track>)
-        fun onError(error: Throwable)
-    }
+    suspend fun searchTracks(expression: String): List<Track>
 }

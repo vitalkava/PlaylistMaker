@@ -4,14 +4,13 @@ import java.io.IOException
 
 class TracksInteractorImpl(private val repository: TracksRepository): TracksInteractor {
 
-    override fun searchTracks(query: String, consumer: TracksInteractor.TracksConsumer) {
-        try {
-            val result = repository.searchTracks(query)
-            consumer.consume(result)
+    override suspend fun searchTracks(query: String): List<Track> {
+        return try {
+            repository.searchTracks(query)
         } catch (e: IOException) {
-            consumer.onError(e)
+            throw e
         } catch (e: Exception) {
-            consumer.onError(e)
+            throw e
         }
     }
 }

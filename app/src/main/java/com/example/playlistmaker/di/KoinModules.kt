@@ -106,8 +106,6 @@ val viewModelModule = module {
         SearchViewModel(
             tracksInteractor = get(),
             searchHistoryInteractor = get(),
-            executorFactory = get(),
-            handlerFactory = get()
         )
     }
     viewModel {
