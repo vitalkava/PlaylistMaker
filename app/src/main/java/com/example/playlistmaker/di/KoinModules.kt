@@ -113,7 +113,6 @@ val viewModelModule = module {
     viewModel {
         AudioPlayerViewModel(
             audioInteractor = get(),
-            handlerFactory = get()
         )
     }
     factory { (onTrackClicked: (Track) -> Unit) -> SearchAdapter(onTrackClicked) }

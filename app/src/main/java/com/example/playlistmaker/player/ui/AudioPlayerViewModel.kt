@@ -3,8 +3,12 @@ package com.example.playlistmaker.player.ui
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.AudioPlayerInteractor
-import com.example.playlistmaker.settings.ui.HandlerFactory
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 enum class PlayerState {
     PREPARING, PLAYING, PAUSED, COMPLETED
@@ -16,29 +20,18 @@ data class AudioPlayerScreenState(
 )
 
 class AudioPlayerViewModel(
-    private val audioInteractor: AudioPlayerInteractor,
-    private val handlerFactory: HandlerFactory
+    private val audioInteractor: AudioPlayerInteractor
 ) : ViewModel() {
 
-    private val handler = handlerFactory.createMainHandler()
-    private val updateRunnable = object : Runnable {
-        override fun run() {
-            if (audioInteractor.isPlaying()) {
-                _screenState.postValue(
-                    AudioPlayerScreenState(
-                        PlayerState.PLAYING,
-                        audioInteractor.getCurrentPosition()
-                    )
-                )
-                handler.postDelayed(this, 300)
-            }
-        }
-    }
+    private var progressJob: Job? = null
 
     private val _screenState = MutableLiveData(AudioPlayerScreenState(PlayerState.PREPARING, 0))
     val screenState: LiveData<AudioPlayerScreenState> = _screenState
 
     fun prepare(url: String) {
+
+        stopProgressUpdates()
+
         _screenState.postValue(AudioPlayerScreenState(PlayerState.PREPARING, 0))
         audioInteractor.prepare(url, {
             _screenState.postValue(AudioPlayerScreenState(PlayerState.PAUSED, 0))
@@ -79,16 +72,29 @@ class AudioPlayerViewModel(
     }
 
     private fun startProgressUpdates() {
-        handler.post(updateRunnable)
+        progressJob?.cancel()
+
+        progressJob = viewModelScope.launch {
+            while (isActive && audioInteractor.isPlaying()) {
+                _screenState.postValue(
+                    AudioPlayerScreenState(
+                        PlayerState.PLAYING,
+                        audioInteractor.getCurrentPosition()
+                    )
+                )
+                delay(300)
+            }
+        }
     }
 
     private fun stopProgressUpdates() {
-        handler.removeCallbacks(updateRunnable)
+        progressJob?.cancel()
+        progressJob = null
     }
 
     override fun onCleared() {
         super.onCleared()
         audioInteractor.release()
-        handler.removeCallbacksAndMessages(null)
+        stopProgressUpdates()
     }
 }
