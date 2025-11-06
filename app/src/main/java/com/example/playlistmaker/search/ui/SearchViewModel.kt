@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.search.domain.Resource
 import com.example.playlistmaker.search.domain.SearchHistoryInteractor
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TracksInteractor
@@ -26,8 +27,12 @@ class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
     private val searchHistoryInteractor: SearchHistoryInteractor
 ) : ViewModel() {
-    private var searchDebounceJob: Job? = null
-    private var saveThrottleJob: Job? = null
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 1000L
+    }
+
+    private var searchJob: Job? = null
     private val _screenState = MutableLiveData(SearchScreenState())
     val screenState: LiveData<SearchScreenState> = _screenState
 
@@ -37,61 +42,60 @@ class SearchViewModel(
 
     fun onQueryChanged(text: String) {
         val newQuery = text.trim()
-        if (newQuery == _screenState.value?.query) {
-            return
-        }
+        if (newQuery == _screenState.value?.query) return
 
-        _screenState.postValue(_screenState.value?.copy(query = newQuery))
-        searchDebounceJob?.cancel()
+        _screenState.value = _screenState.value?.copy(query = newQuery)
+
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            performSearch(newQuery)
+        }
 
         if (newQuery.isEmpty()) {
             loadHistory()
-        } else {
-            searchDebounceJob = viewModelScope.launch {
-                delay(1000)
-                performSearchInternal()
+        }
+    }
+
+    private fun performSearch(query: String) {
+        if (query.isNotEmpty()) {
+            viewModelScope.launch {
+                tracksInteractor.searchTracks(query)
+                    .collect { resource ->
+                        processResult(resource)
+                    }
             }
         }
     }
 
-    private suspend fun performSearchInternal() {
-        val query = _screenState.value?.query ?: return
-        _screenState.value = _screenState.value?.copy(isLoading = true)
-
-        try {
-            val foundTracks = withContext(Dispatchers.IO) {
-                tracksInteractor.searchTracks(query)
-            }
-
-            withContext(Dispatchers.Main) {
+    private fun processResult(resource: Resource<List<Track>>) {
+        when (resource) {
+            is Resource.Success -> {
+                val tracks = resource.data
                 _screenState.value = _screenState.value?.copy(
                     isLoading = false,
-                    tracks = foundTracks,
+                    tracks = tracks,
                     isHistoryVisible = false,
-                    isNoResultsVisible = foundTracks.isEmpty(),
-                    isNoInternetVisible = false
+                    isNoResultsVisible = tracks.isEmpty(),
+                    isNoInternetVisible = false,
                 )
             }
-        } catch (e: Exception) {
-            withContext(Dispatchers.Main) {
+
+            is Resource.Error -> {
                 _screenState.value = _screenState.value?.copy(
                     isLoading = false,
                     tracks = emptyList(),
                     isHistoryVisible = false,
                     isNoResultsVisible = false,
-                    isNoInternetVisible = true
+                    isNoInternetVisible = true,
                 )
+
             }
         }
     }
 
     fun saveTrackToHistory(track: Track) {
-        saveThrottleJob?.cancel()
-        saveThrottleJob = viewModelScope.launch {
-            if (saveThrottleJob?.isActive == true) {
-                delay(500)
-            }
-
+        viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 searchHistoryInteractor.saveTrack(track)
             }
@@ -105,8 +109,11 @@ class SearchViewModel(
             }
             _screenState.value = _screenState.value?.copy(
                 isLoading = false,
-                tracks = if (_screenState.value?.query.isNullOrEmpty()) history else _screenState.value?.tracks
-                    ?: emptyList(),
+                tracks = if (_screenState.value?.query.isNullOrEmpty()) {
+                    history
+                } else {
+                    _screenState.value?.tracks ?: emptyList()
+                },
                 isHistoryVisible = history.isNotEmpty() && _screenState.value?.query.isNullOrEmpty(),
                 isNoResultsVisible = false,
                 isNoInternetVisible = false
@@ -115,7 +122,6 @@ class SearchViewModel(
     }
 
     fun clearHistory() {
-
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
                 searchHistoryInteractor.clearHistory()
@@ -132,17 +138,12 @@ class SearchViewModel(
     fun retrySearch() {
         val query = _screenState.value?.query
         if (!query.isNullOrBlank()) {
-            searchDebounceJob?.cancel()
-            searchDebounceJob = viewModelScope.launch {
-                delay(0)
-                performSearchInternal()
-            }
+            performSearch(query)
         }
     }
 
     override fun onCleared() {
         super.onCleared()
-        searchDebounceJob?.cancel()
-        saveThrottleJob?.cancel()
+        searchJob?.cancel()
     }
 }

@@ -65,4 +65,5 @@ dependencies {
     implementation(libs.fragment.ktx)
     implementation(libs.material.v180)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.retrofit2.kotlin.coroutines.adapter)
 }

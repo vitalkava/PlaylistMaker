@@ -1,16 +1,11 @@
 package com.example.playlistmaker.search.domain
 
-import java.io.IOException
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class TracksInteractorImpl(private val repository: TracksRepository): TracksInteractor {
 
-    override suspend fun searchTracks(query: String): List<Track> {
-        return try {
-            repository.searchTracks(query)
-        } catch (e: IOException) {
-            throw e
-        } catch (e: Exception) {
-            throw e
-        }
+    override fun searchTracks(query: String): Flow<Resource<List<Track>>> {
+        return repository.searchTracks(query).map { it }
     }
 }
