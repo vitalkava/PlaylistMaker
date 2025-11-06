@@ -59,6 +59,7 @@ class SearchViewModel(
 
     private fun performSearch(query: String) {
         if (query.isNotEmpty()) {
+            _screenState.value = _screenState.value?.copy(isLoading = true)
             viewModelScope.launch {
                 tracksInteractor.searchTracks(query)
                     .collect { resource ->
