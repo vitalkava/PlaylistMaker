@@ -8,7 +8,13 @@ class MediaPlayerRepositoryImpl(
 ) : AudioPlayerRepository {
     private var mediaPlayer: MediaPlayer? = null
 
-    override fun prepare(url: String, onPrepared: () -> Unit, onComplete: () -> Unit) {
+    override fun prepare(url: String?, onPrepared: () -> Unit, onComplete: () -> Unit) {
+        if (url.isNullOrEmpty()){
+            mediaPlayer?.release()
+            mediaPlayer = null
+            onComplete()
+            return
+        }
         try {
             mediaPlayer?.release()
             mediaPlayer = mediaPlayerFactory.create().apply {
@@ -20,6 +26,7 @@ class MediaPlayerRepositoryImpl(
                     reset()
                 }
                 setOnErrorListener { _, what, extra ->
+                    onComplete()
                     reset()
                     true
                 }
@@ -28,6 +35,7 @@ class MediaPlayerRepositoryImpl(
             e.printStackTrace()
             mediaPlayer?.release()
             mediaPlayer = null
+            onComplete()
         }
     }
 

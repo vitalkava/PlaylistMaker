@@ -46,7 +46,8 @@ class AudioPlayerFragment : Fragment() {
         viewModel.screenState.observe(viewLifecycleOwner) { state ->
             binding.playButton.isEnabled = state.playerState != PlayerState.PREPARING
             binding.playButton.setImageResource(
-                if (state.playerState == PlayerState.PLAYING) R.drawable.pause_button else R.drawable.play_button
+                if (state.playerState == PlayerState.PLAYING) R.drawable.pause_button
+                else R.drawable.play_button
             )
             binding.progressTrack.text =
                 SimpleDateFormat("mm:ss", Locale.getDefault()).format(state.currentPosition)
@@ -64,7 +65,7 @@ class AudioPlayerFragment : Fragment() {
         binding.tvBandName.text = track.artistName
         binding.tvSongDurationValue.text = track.trackTime
         binding.tvAlbumNameValue.text = track.collectionName
-        binding.tvSongYearValue.text = track.releaseDate.take(4)
+        binding.tvSongYearValue.text = track.releaseDate.orEmpty().take(4)
         binding.tvSongGenreValue.text = track.primaryGenreName
         binding.tvTrackCountryValue.text = track.country
 

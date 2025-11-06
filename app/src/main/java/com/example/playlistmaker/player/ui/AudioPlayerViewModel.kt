@@ -28,9 +28,12 @@ class AudioPlayerViewModel(
     private val _screenState = MutableLiveData(AudioPlayerScreenState(PlayerState.PREPARING, 0))
     val screenState: LiveData<AudioPlayerScreenState> = _screenState
 
-    fun prepare(url: String) {
+    fun prepare(url: String?) {
 
-        stopProgressUpdates()
+        if (url.isNullOrEmpty()) {
+            _screenState.postValue(AudioPlayerScreenState(PlayerState.COMPLETED, 0))
+            return
+        }
 
         _screenState.postValue(AudioPlayerScreenState(PlayerState.PREPARING, 0))
         audioInteractor.prepare(url, {
