@@ -97,9 +97,7 @@ class SearchViewModel(
 
     fun saveTrackToHistory(track: Track) {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                searchHistoryInteractor.saveTrack(track)
-            }
+            searchHistoryInteractor.saveTrack(track)
         }
     }
 
@@ -124,9 +122,7 @@ class SearchViewModel(
 
     fun clearHistory() {
         viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                searchHistoryInteractor.clearHistory()
-            }
+            searchHistoryInteractor.clearHistory()
             if (_screenState.value?.query.isNullOrEmpty()) {
                 _screenState.value = _screenState.value?.copy(
                     tracks = emptyList(),

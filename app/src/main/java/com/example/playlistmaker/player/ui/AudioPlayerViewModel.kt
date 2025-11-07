@@ -23,6 +23,10 @@ class AudioPlayerViewModel(
     private val audioInteractor: AudioPlayerInteractor
 ) : ViewModel() {
 
+    companion object {
+        private const val PROGRESS_UPDATE_DELAY = 300L
+    }
+
     private var progressJob: Job? = null
 
     private val _screenState = MutableLiveData(AudioPlayerScreenState(PlayerState.PREPARING, 0))
@@ -85,7 +89,7 @@ class AudioPlayerViewModel(
                         audioInteractor.getCurrentPosition()
                     )
                 )
-                delay(300)
+                delay(PROGRESS_UPDATE_DELAY)
             }
         }
     }

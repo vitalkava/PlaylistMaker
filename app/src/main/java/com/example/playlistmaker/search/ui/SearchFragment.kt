@@ -34,6 +34,7 @@ class SearchFragment: Fragment() {
     companion object {
         private const val SEARCH_QUERY_KEY = "SEARCH_QUERY"
         private const val TRACK_JSON_KEY = "trackJson"
+        private const val DELAY = 500L
     }
 
     override fun onCreateView(
@@ -122,7 +123,7 @@ class SearchFragment: Fragment() {
             ?.navigate(R.id.audioPlayerFragment, bundle)
 
         lifecycleScope.launch {
-            delay(500)
+            delay(DELAY)
             isNavigating = false
         }
     }
