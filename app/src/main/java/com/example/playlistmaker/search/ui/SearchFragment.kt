@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -26,9 +29,12 @@ class SearchFragment: Fragment() {
     private val adapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
     private val historyAdapter: SearchAdapter by inject { parametersOf(::onTrackSelected) }
 
+    private var isNavigating = false
+
     companion object {
         private const val SEARCH_QUERY_KEY = "SEARCH_QUERY"
         private const val TRACK_JSON_KEY = "trackJson"
+        private const val DELAY = 500L
     }
 
     override fun onCreateView(
@@ -100,6 +106,9 @@ class SearchFragment: Fragment() {
     }
 
     private fun onTrackSelected(track: Track) {
+        if (isNavigating) return
+        isNavigating = true
+
         viewModel.saveTrackToHistory(track)
         val trackJson = gson.toJson(track)
 
@@ -112,10 +121,16 @@ class SearchFragment: Fragment() {
             .findFragmentById(R.id.rootFragmentContainerView)
             ?.findNavController()
             ?.navigate(R.id.audioPlayerFragment, bundle)
+
+        lifecycleScope.launch {
+            delay(DELAY)
+            isNavigating = false
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        isNavigating = false
     }
 }
