@@ -66,4 +66,7 @@ dependencies {
     implementation(libs.material.v180)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.retrofit2.kotlin.coroutines.adapter)
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
 }
