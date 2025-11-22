@@ -1,6 +1,7 @@
 package com.example.playlistmaker.search.data
 
 import android.content.SharedPreferences
+import com.example.playlistmaker.library.data.db.AppDatabase
 import com.example.playlistmaker.search.domain.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
@@ -8,12 +9,13 @@ import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
 class SearchHistoryRepositoryImpl(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val db: AppDatabase,
 ) : SearchHistoryRepository, KoinComponent {
 
     private val gson: Gson by inject()
 
-    override fun saveTrack(track: Track) {
+    override suspend fun saveTrack(track: Track) {
         val trackList = getHistory().toMutableList()
 
         trackList.removeAll { it.trackName == track.trackName }
@@ -29,9 +31,12 @@ class SearchHistoryRepositoryImpl(
             .apply()
     }
 
-    override fun getHistory(): List<Track> {
+    override suspend fun getHistory(): List<Track> {
         val json = sharedPreferences.getString(SEARCH_HISTORY_KEY, "[]")
-        return gson.fromJson(json, Array<Track>::class.java).toList()
+        val tracks = gson.fromJson(json, Array<Track>::class.java).toList()
+        val favoriteIds = db.trackDao().getId()
+        tracks.forEach { track -> track.isFavorite = track.trackId in favoriteIds }
+        return tracks
     }
 
     override fun clearHistory() {
