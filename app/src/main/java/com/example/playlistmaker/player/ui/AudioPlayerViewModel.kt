@@ -44,6 +44,18 @@ class AudioPlayerViewModel(
 
     fun setCurrentTrack(track: Track) {
         currentTrack = track
+        loadFavoriteStatus()
+    }
+
+    private fun loadFavoriteStatus() {
+        currentTrack?.let { track ->
+            viewModelScope.launch {
+                val favoriteIds = favoritesInteractor.getFavoritesIds()
+                val isFavorite = track.trackId in favoriteIds
+                track.isFavorite = isFavorite
+                _screenState.postValue(_screenState.value?.copy(isFavorite = isFavorite))
+            }
+        }
     }
 
     fun onFavoriteClicked() {

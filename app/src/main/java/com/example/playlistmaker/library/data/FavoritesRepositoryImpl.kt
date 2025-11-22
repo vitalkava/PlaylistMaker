@@ -25,4 +25,8 @@ class FavoritesRepositoryImpl(
         return db.trackDao().getTracks().map { entities ->
             entities.map { entity -> convertor.map(entity) } }
     }
+
+    override suspend fun getFavoritesIds(): List<String> {
+        return db.trackDao().getId()
+    }
 }
