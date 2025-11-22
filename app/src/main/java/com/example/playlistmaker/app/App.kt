@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.example.playlistmaker.di.dataModule
 import com.example.playlistmaker.di.domainModule
 import com.example.playlistmaker.di.libraryModule
+import com.example.playlistmaker.di.repositoryModule
 import com.example.playlistmaker.di.viewModelModule
 import com.example.playlistmaker.settings.domain.GetCurrentThemeUseCase
 import com.example.playlistmaker.settings.domain.SwitchThemeUseCase
@@ -22,7 +23,7 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(dataModule, domainModule, viewModelModule, libraryModule)
+            modules(dataModule, domainModule, viewModelModule, libraryModule, repositoryModule)
         }
 
         val isDarkTheme = getCurrentThemeUseCase.execute()

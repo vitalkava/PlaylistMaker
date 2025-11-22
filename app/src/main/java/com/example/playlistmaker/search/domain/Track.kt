@@ -1,6 +1,8 @@
 package com.example.playlistmaker.search.domain
 
+
 data class Track(
+    val trackId: String,
     val trackName: String,
     val artistName: String,
     val trackTime: String,
@@ -10,5 +12,6 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String?,
+    var isFavorite: Boolean = false,
 
 )

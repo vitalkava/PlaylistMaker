@@ -10,6 +10,7 @@ object TrackMapper {
 
     fun mapToDomain(trackDto: TrackDto): Track {
         return Track(
+            trackId = trackDto.trackId,
             trackName = trackDto.trackName,
             artistName = trackDto.artistName,
             trackTime = formatDuration(trackDto.trackTimeMillis),
@@ -19,6 +20,7 @@ object TrackMapper {
             primaryGenreName = trackDto.primaryGenreName,
             country = trackDto.country,
             previewUrl = trackDto.previewUrl,
+            isFavorite = false,
 
         )
     }
