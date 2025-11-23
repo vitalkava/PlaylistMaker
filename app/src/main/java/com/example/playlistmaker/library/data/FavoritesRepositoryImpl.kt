@@ -4,8 +4,10 @@ import com.example.playlistmaker.library.data.converters.TrackDbConverter
 import com.example.playlistmaker.library.data.db.AppDatabase
 import com.example.playlistmaker.library.domain.FavoritesRepository
 import com.example.playlistmaker.search.domain.Track
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class FavoritesRepositoryImpl(
     private val db: AppDatabase,
@@ -13,12 +15,16 @@ class FavoritesRepositoryImpl(
 ): FavoritesRepository {
     override suspend fun addToFavorites(track: Track) {
         val entity = convertor.map(track)
-        db.trackDao().insertTrackEntity(entity)
+        withContext(Dispatchers.IO) {
+            db.trackDao().insertTrackEntity(entity)
+        }
     }
 
     override suspend fun removeFromFavorites(track: Track) {
         val entity = convertor.map(track)
-        db.trackDao().deleteTrackEntity(entity)
+        withContext(Dispatchers.IO) {
+            db.trackDao().deleteTrackEntity(entity)
+        }
     }
 
     override fun getFavorites(): Flow<List<Track>> {
@@ -27,6 +33,8 @@ class FavoritesRepositoryImpl(
     }
 
     override suspend fun getFavoritesIds(): List<String> {
-        return db.trackDao().getId()
+        return withContext(Dispatchers.IO) {
+            db.trackDao().getId()
+        }
     }
 }
