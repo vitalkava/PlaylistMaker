@@ -1,7 +1,7 @@
 package com.example.playlistmaker.search.domain
 
 interface SearchHistoryInteractor {
-    fun saveTrack(track: Track)
-    fun getHistory(): List<Track>
+    suspend fun saveTrack(track: Track)
+    suspend fun getHistory(): List<Track>
     fun clearHistory()
 }

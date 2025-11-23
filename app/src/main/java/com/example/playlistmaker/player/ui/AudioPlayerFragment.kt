@@ -43,12 +43,22 @@ class AudioPlayerFragment : Fragment() {
         val track = gson.fromJson(trackJson, Track::class.java)
         updateUI(track)
 
+        viewModel.setCurrentTrack(track)
+
+        binding.addToFavoritesButton.setOnClickListener { viewModel.onFavoriteClicked() }
+
         viewModel.screenState.observe(viewLifecycleOwner) { state ->
+            binding.addToFavoritesButton.setImageResource(
+                if (state.isFavorite) R.drawable.add_to_favorites_button_activ
+                else R.drawable.add_to_favorites_button
+            )
+
             binding.playButton.isEnabled = state.playerState != PlayerState.PREPARING
             binding.playButton.setImageResource(
                 if (state.playerState == PlayerState.PLAYING) R.drawable.pause_button
                 else R.drawable.play_button
             )
+
             binding.progressTrack.text =
                 SimpleDateFormat("mm:ss", Locale.getDefault()).format(state.currentPosition)
         }
