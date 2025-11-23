@@ -1,6 +1,6 @@
 package com.example.playlistmaker.library.data
 
-import com.example.playlistmaker.library.data.converters.TrackDbConvertor
+import com.example.playlistmaker.library.data.converters.TrackDbConverter
 import com.example.playlistmaker.library.data.db.AppDatabase
 import com.example.playlistmaker.library.domain.FavoritesRepository
 import com.example.playlistmaker.search.domain.Track
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 
 class FavoritesRepositoryImpl(
     private val db: AppDatabase,
-    private val convertor: TrackDbConvertor
+    private val convertor: TrackDbConverter
 ): FavoritesRepository {
     override suspend fun addToFavorites(track: Track) {
         val entity = convertor.map(track)

@@ -3,7 +3,7 @@ package com.example.playlistmaker.library.data.converters
 import com.example.playlistmaker.library.data.db.entity.TrackEntity
 import com.example.playlistmaker.search.domain.Track
 
-class TrackDbConvertor {
+class TrackDbConverter {
 
     fun map(track: Track): TrackEntity {
         return TrackEntity(

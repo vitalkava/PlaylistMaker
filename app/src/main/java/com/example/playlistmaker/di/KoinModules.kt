@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.playlistmaker.library.data.FavoritesInteractorImpl
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
-import com.example.playlistmaker.library.data.converters.TrackDbConvertor
+import com.example.playlistmaker.library.data.converters.TrackDbConverter
 import com.example.playlistmaker.library.data.db.AppDatabase
 import com.example.playlistmaker.library.domain.FavoritesInteractor
 import com.example.playlistmaker.library.domain.FavoritesRepository
@@ -135,12 +135,12 @@ val libraryModule = module {
 }
 
 val repositoryModule = module {
-    factory { TrackDbConvertor() }
+    factory { TrackDbConverter() }
 
     single <FavoritesRepository> {
         FavoritesRepositoryImpl(
             get<AppDatabase>(),
-            get<TrackDbConvertor>()
+            get<TrackDbConverter>()
         )
     }
 
