@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_new_playlist"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".library.ui.playlists.NewPlaylistFragment">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/top_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="56dp" />
+
+    <Button
+        android:id="@+id/button_back"
+        style="@style/ButtonBackStyle"
+        app:layout_constraintBottom_toTopOf="@id/top_guideline"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        style="@style/ScreenTitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/new_playlist"
+        app:layout_constraintBottom_toTopOf="@+id/top_guideline"
+        app:layout_constraintStart_toEndOf="@+id/button_back"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/add_cover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="26dp"
+        android:background="@drawable/rounded_rectangle"
+        app:shapeAppearanceOverlay="@style/PlaylistImageShape"
+        android:clickable="true"
+        android:scaleType="center"
+        android:src="@drawable/add_cover"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_guideline" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_name"
+        style="@style/frameTextInputAddPlaylist"
+        android:layout_marginTop="32dp"
+        android:hint="@string/name_star"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/add_cover">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_text_name"
+            style="@style/textInputAddPlaylist" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/add_description"
+        style="@style/frameTextInputAddPlaylist"
+        android:layout_marginTop="@dimen/margin_16"
+        android:hint="@string/description"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/add_name">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/input_text_description"
+            style="@style/textInputAddPlaylist" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/create_button"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_marginHorizontal="17dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="@drawable/playlist_create_button_selector"
+        android:enabled="false"
+        android:fontFamily="@font/ys_display_medium"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:text="@string/create"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textFontWeight="500"
+        android:textSize="@dimen/text_size_16"
+        app:cornerRadius="8dp"
+        android:letterSpacing="-0.0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

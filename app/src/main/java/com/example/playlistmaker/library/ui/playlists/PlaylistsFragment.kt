@@ -2,12 +2,10 @@ package com.example.playlistmaker.library.ui.playlists
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
-import com.example.playlistmaker.library.ui.favorites.FavoritesFragment
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
@@ -23,7 +21,8 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        _binding = FragmentPlaylistsBinding.inflate(layoutInflater)
+        _binding = FragmentPlaylistsBinding.bind(view)
+
         val playlists = viewModel.getPlaylists()
         val placeholder = binding.placeholder
 
@@ -34,7 +33,7 @@ class PlaylistsFragment : Fragment(R.layout.fragment_playlists) {
         }
 
         binding.buttonNewPlaylist.setOnClickListener {
-            // be later
+            findNavController().navigate(R.id.action_libraryFragment_to_newPlaylistFragment)
         }
     }
 

@@ -5,12 +5,20 @@ import android.content.SharedPreferences
 import androidx.room.Room
 import com.example.playlistmaker.library.data.FavoritesInteractorImpl
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
+import com.example.playlistmaker.library.data.PlaylistRepositoryImpl
+import com.example.playlistmaker.library.data.PlaylistTrackRepositoryImpl
+import com.example.playlistmaker.library.data.converters.PlaylistDbConverter
 import com.example.playlistmaker.library.data.converters.TrackDbConverter
 import com.example.playlistmaker.library.data.db.AppDatabase
 import com.example.playlistmaker.library.domain.FavoritesInteractor
 import com.example.playlistmaker.library.domain.FavoritesRepository
+import com.example.playlistmaker.library.domain.PlaylistInteractor
+import com.example.playlistmaker.library.domain.PlaylistInteractorImpl
+import com.example.playlistmaker.library.domain.PlaylistTrackRepository
+import com.example.playlistmaker.library.domain.PlaylistsRepository
 import com.example.playlistmaker.library.ui.favorites.FavoritesViewModel
 import com.example.playlistmaker.library.ui.LibraryViewModel
+import com.example.playlistmaker.library.ui.playlists.NewPlaylistViewModel
 import com.example.playlistmaker.library.ui.playlists.PlaylistsViewModel
 import com.example.playlistmaker.player.data.MediaPlayerFactory
 import com.example.playlistmaker.player.data.MediaPlayerFactoryImpl
@@ -94,6 +102,8 @@ val dataModule = module {
             "database.db"
         ).build()
     }
+
+    single { PlaylistDbConverter(get<Gson>()) }
 }
 
 val domainModule = module {
@@ -103,6 +113,11 @@ val domainModule = module {
     factory<SearchHistoryInteractor> { SearchHistoryInteractorImpl(get()) }
     factory<AudioPlayerInteractor> { AudioPlayerInteractorImpl(get()) }
     factory<FavoritesInteractor> { FavoritesInteractorImpl(get()) }
+    factory<PlaylistInteractor> {
+        PlaylistInteractorImpl(
+            get<PlaylistsRepository>(),
+            get<PlaylistTrackRepository>()
+        ) }
 }
 
 val viewModelModule = module {
@@ -126,6 +141,8 @@ val viewModelModule = module {
         )
     }
     factory { (onTrackClicked: (Track) -> Unit) -> SearchAdapter(onTrackClicked) }
+
+    viewModel { NewPlaylistViewModel(get(), get<PlaylistInteractor>()) }
 }
 
 val libraryModule = module {
@@ -155,6 +172,20 @@ val repositoryModule = module {
         SearchHistoryRepositoryImpl(
             get(PLAYLIST_PREFS),
             get<AppDatabase>()
+        )
+    }
+
+    single<PlaylistsRepository> {
+        PlaylistRepositoryImpl(
+            get<AppDatabase>(),
+            get<PlaylistDbConverter>()
+        )
+    }
+
+    single<PlaylistTrackRepository> {
+        PlaylistTrackRepositoryImpl(
+            get<AppDatabase>(),
+            get<TrackDbConverter>()
         )
     }
 }

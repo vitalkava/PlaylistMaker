@@ -30,7 +30,9 @@ class LibraryFragment: Fragment() {
 
         binding.viewPager.adapter = LibraryPagerAdapter(
             fragmentManager = childFragmentManager,
-            lifecycle = lifecycle)
+            lifecycle = lifecycle,
+
+        )
 
         tabsMediator = TabLayoutMediator(
             binding.libraryTabLayout,

@@ -33,4 +33,13 @@
     <string name="new_playlist">Новы плэйлiст</string>
     <string name="favorite_tracks">Любімыя трэкі</string>
     <string name="playlists">Плэйлісты</string>
+    <string name="name_star">Назва*</string>
+    <string name="description">Aпісанне</string>
+    <string name="create">Стварыць</string>
+    <string name="complete_playlist_creation_question">Скончыць стварэнне плэйліста?</string>
+    <string name="all_unsaved_data_will_be_lost">Усе незахаваныя даныя будуць страчаныя!</string>
+    <string name="complete_answer">Скончыць</string>
+    <string name="cancel_answer">Адмена</string>
+    <string name="playlist_">Плэлiст</string>
+    <string name="_created">створан.</string>
 </resources>

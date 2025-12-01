@@ -36,5 +36,14 @@
     <string name="new_playlist">New playlist</string>
     <string name="favorite_tracks">Favorite tracks</string>
     <string name="playlists">Playlists</string>
+    <string name="name_star">Name*</string>
+    <string name="description">Description</string>
+    <string name="create">Create</string>
+    <string name="complete_playlist_creation_question">Complete playlist creation?</string>
+    <string name="all_unsaved_data_will_be_lost">All unsaved data will be lost!</string>
+    <string name="complete_answer">Complete</string>
+    <string name="cancel_answer">Cancel</string>
+    <string name="playlist_">Playlist</string>
+    <string name="_created">created.</string>
 
 </resources>
