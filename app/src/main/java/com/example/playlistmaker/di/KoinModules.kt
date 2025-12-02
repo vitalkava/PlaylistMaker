@@ -147,7 +147,7 @@ val viewModelModule = module {
 
 val libraryModule = module {
     viewModel { LibraryViewModel() }
-    viewModel { PlaylistsViewModel() }
+    viewModel { PlaylistsViewModel(get<PlaylistInteractor>()) }
     viewModel { FavoritesViewModel(get<FavoritesInteractor>()) }
 }
 
