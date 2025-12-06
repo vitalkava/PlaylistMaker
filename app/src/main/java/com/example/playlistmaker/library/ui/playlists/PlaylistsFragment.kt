@@ -17,7 +17,11 @@ class PlaylistsFragment : Fragment() {
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding get() = _binding!!
 
-    private val adapter = PlaylistAdapter { } // Click for future
+    private val adapter = PlaylistAdapter(
+        onClick = { }, // Click for future
+        isSmall = false,
+
+    )
 
     companion object {
         fun newInstance(): PlaylistsFragment = PlaylistsFragment()

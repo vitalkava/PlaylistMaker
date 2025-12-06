@@ -42,4 +42,7 @@
     <string name="cancel_answer">Отмена</string>
     <string name="playlist_">Плейлист</string>
     <string name="_created">создан.</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="track_already_added">Трек уже добавлен в плейлист</string>
+    <string name="added_to_playlist">Добавлено в плейлист</string>
 </resources>

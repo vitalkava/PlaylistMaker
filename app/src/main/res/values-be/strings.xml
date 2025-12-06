@@ -42,4 +42,7 @@
     <string name="cancel_answer">Адмена</string>
     <string name="playlist_">Плэлiст</string>
     <string name="_created">створан.</string>
+    <string name="add_to_playlist">Дадаць у плэйліст</string>
+    <string name="track_already_added">Трэк ужо дададзены ў плэйліст</string>
+    <string name="added_to_playlist">Дададзена ў плэйліст</string>
 </resources>
