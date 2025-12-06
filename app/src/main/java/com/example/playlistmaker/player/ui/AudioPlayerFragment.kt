@@ -33,8 +33,18 @@ class AudioPlayerFragment : Fragment() {
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            _binding?.overlay?.visibility =
-                if (newState == BottomSheetBehavior.STATE_HIDDEN) View.GONE else View.VISIBLE
+            when (newState) {
+                BottomSheetBehavior.STATE_EXPANDED,
+                BottomSheetBehavior.STATE_COLLAPSED -> {
+                    binding.overlay.visibility = View.VISIBLE
+                    binding.overlay.alpha = 1f
+                }
+
+                BottomSheetBehavior.STATE_HIDDEN -> {
+                    binding.overlay.alpha = 0f
+                    binding.overlay.visibility = View.GONE
+                }
+            }
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
