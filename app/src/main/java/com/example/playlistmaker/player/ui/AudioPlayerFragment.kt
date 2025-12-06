@@ -4,11 +4,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentAudioPlayerBinding
+import com.example.playlistmaker.library.ui.playlists.PlaylistAdapter
 import com.example.playlistmaker.search.domain.Track
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.gson.Gson
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -22,6 +28,25 @@ class AudioPlayerFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: AudioPlayerViewModel by viewModel()
     private val gson: Gson by inject()
+
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayout>
+
+    private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+            binding.overlay.visibility = if (newState == BottomSheetBehavior.STATE_HIDDEN)
+                View.GONE else View.VISIBLE
+        }
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            binding.overlay.alpha = slideOffset.coerceIn(0f, 1f)
+        }
+    }
+
+    private val playlistAdapter = PlaylistAdapter(
+        onClick = { playlist -> viewModel.addToPlaylist(playlist) },
+        isSmall = true,
+
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,6 +93,64 @@ class AudioPlayerFragment : Fragment() {
         }
 
         viewModel.prepare(track.previewUrl)
+
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheet).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(bottomSheetCallback)
+
+        binding.rvPlaylists.layoutManager =
+            LinearLayoutManager(requireContext())
+        binding.rvPlaylists.adapter = playlistAdapter
+
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                binding.overlay.visibility =
+                    if (newState == BottomSheetBehavior.STATE_HIDDEN) View.GONE else View.VISIBLE
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.overlay.alpha = slideOffset.coerceIn(0f, 1f)
+            }
+        })
+
+        binding.addToPlaylistButton.setOnClickListener {
+            viewModel.loadPlaylistsForBottomSheet()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        binding.btnNewPlaylist.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            findNavController().navigate(R.id.action_audioPlayerFragment_to_newPlaylistFragment)
+        }
+
+        viewModel.playlistsForBottomSheet.observe(viewLifecycleOwner) { playlists ->
+            playlistAdapter.update(playlists)
+        }
+
+        viewModel.addToPlaylistStatus.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                is AddStatus.Success -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "${getString(R.string.add_to_playlist)} ${status.playlistName}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+
+                is AddStatus.AlreadyExists -> {
+                    Toast.makeText(
+                        requireContext(),
+                        "${getString(R.string.track_already_added)} ${status.playlistName}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                }
+            }
+        }
     }
 
     private fun updateUI(track: Track) {
@@ -90,6 +173,7 @@ class AudioPlayerFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        bottomSheetBehavior.removeBottomSheetCallback(bottomSheetCallback)
         super.onDestroyView()
         _binding = null
     }
