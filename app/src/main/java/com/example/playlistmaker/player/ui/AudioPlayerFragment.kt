@@ -33,19 +33,18 @@ class AudioPlayerFragment : Fragment() {
 
     private val bottomSheetCallback = object : BottomSheetBehavior.BottomSheetCallback() {
         override fun onStateChanged(bottomSheet: View, newState: Int) {
-            binding.overlay.visibility = if (newState == BottomSheetBehavior.STATE_HIDDEN)
-                View.GONE else View.VISIBLE
+            _binding?.overlay?.visibility =
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) View.GONE else View.VISIBLE
         }
 
         override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            binding.overlay.alpha = slideOffset.coerceIn(0f, 1f)
+            _binding?.overlay?.alpha = slideOffset.coerceIn(0f, 1f)
         }
     }
 
     private val playlistAdapter = PlaylistAdapter(
         onClick = { playlist -> viewModel.addToPlaylist(playlist) },
-        isSmall = true,
-
+        isSmall = true
     )
 
     override fun onCreateView(
@@ -103,18 +102,6 @@ class AudioPlayerFragment : Fragment() {
         binding.rvPlaylists.layoutManager =
             LinearLayoutManager(requireContext())
         binding.rvPlaylists.adapter = playlistAdapter
-
-        bottomSheetBehavior.addBottomSheetCallback(object :
-            BottomSheetBehavior.BottomSheetCallback() {
-            override fun onStateChanged(bottomSheet: View, newState: Int) {
-                binding.overlay.visibility =
-                    if (newState == BottomSheetBehavior.STATE_HIDDEN) View.GONE else View.VISIBLE
-            }
-
-            override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.alpha = slideOffset.coerceIn(0f, 1f)
-            }
-        })
 
         binding.addToPlaylistButton.setOnClickListener {
             viewModel.loadPlaylistsForBottomSheet()

@@ -182,6 +182,10 @@
         <item name="cornerSize">8dp</item>
     </style>
 
+    <style name="PlaylistSmallImageShape">
+        <item name="cornerSize">2dp</item>
+    </style>
+
     <style name="CustomAlertDialog" parent="Theme.AppCompat.Dialog.Alert">
         <item name="android:windowTitleStyle">@style/CustomAlertDialogTitle</item>
         <item name="android:textColor">?attr/colorAccent</item>
