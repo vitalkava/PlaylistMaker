@@ -156,7 +156,7 @@ val repositoryModule = module {
 
     single <FavoritesRepository> {
         FavoritesRepositoryImpl(
-            get<AppDatabase>(),
+            get<AppDatabase>().trackDao(),
             get<TrackDbConverter>()
         )
     }
@@ -164,14 +164,14 @@ val repositoryModule = module {
     single <TracksRepository>{
         TracksRepositoryImpl(
             get <NetworkClient>(),
-            get <AppDatabase>()
+            get <AppDatabase>().trackDao()
         )
     }
 
     single <SearchHistoryRepository>{
         SearchHistoryRepositoryImpl(
             get(PLAYLIST_PREFS),
-            get<AppDatabase>()
+            get<AppDatabase>().trackDao()
         )
     }
 
@@ -184,7 +184,7 @@ val repositoryModule = module {
 
     single<PlaylistTrackRepository> {
         PlaylistTrackRepositoryImpl(
-            get<AppDatabase>(),
+            get<AppDatabase>().playlistTrackDao(),
             get<TrackDbConverter>()
         )
     }

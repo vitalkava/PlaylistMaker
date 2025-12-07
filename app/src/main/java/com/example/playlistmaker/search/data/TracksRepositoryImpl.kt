@@ -1,6 +1,6 @@
 package com.example.playlistmaker.search.data
 
-import com.example.playlistmaker.library.data.db.AppDatabase
+import com.example.playlistmaker.library.data.db.dao.TrackDao
 import com.example.playlistmaker.search.domain.Resource
 import com.example.playlistmaker.search.domain.Track
 import com.example.playlistmaker.search.domain.TracksRepository
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val db: AppDatabase,
+    private val trackDao: TrackDao,
     ) : TracksRepository {
     override fun searchTracks(expression: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.doRequest(TrackSearchRequest(expression))
@@ -20,7 +20,7 @@ class TracksRepositoryImpl(
                     .results.map { dto ->
                     TrackMapper.mapToDomain(dto)
                 }
-                val favoriteIds = db.trackDao().getId()
+                val favoriteIds = trackDao.getId()
                 tracks.forEach { track ->
                     track.isFavorite = track.trackId in favoriteIds
                 }
