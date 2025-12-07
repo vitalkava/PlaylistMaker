@@ -5,6 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.library.domain.FavoritesInteractor
+import com.example.playlistmaker.library.domain.PlaylistInteractor
+import com.example.playlistmaker.library.domain.model.Playlist
 import com.example.playlistmaker.player.domain.AudioPlayerInteractor
 import com.example.playlistmaker.search.domain.Track
 import kotlinx.coroutines.Job
@@ -20,14 +22,18 @@ data class AudioPlayerScreenState(
     val playerState: PlayerState,
     val currentPosition: Int,
     val isFavorite: Boolean = false,
+)
 
-    )
+sealed class AddStatus {
+    data class Success(val playlistName: String) : AddStatus()
+    data class AlreadyExists(val playlistName: String) : AddStatus()
+}
 
 class AudioPlayerViewModel(
     private val audioInteractor: AudioPlayerInteractor,
     private val favoritesInteractor: FavoritesInteractor,
-
-    ) : ViewModel() {
+    private val playlistInteractor: PlaylistInteractor
+) : ViewModel() {
 
     companion object {
         private const val PROGRESS_UPDATE_DELAY = 300L
@@ -41,6 +47,11 @@ class AudioPlayerViewModel(
     val screenState: LiveData<AudioPlayerScreenState> = _screenState
 
     private var currentTrack: Track? = null
+
+    private val _playlistsForBottomSheet = MutableLiveData<List<Playlist>>()
+    val playlistsForBottomSheet: LiveData<List<Playlist>> = _playlistsForBottomSheet
+    private val _addToPlaylistStatus = MutableLiveData<AddStatus>()
+    val addToPlaylistStatus: LiveData<AddStatus> = _addToPlaylistStatus
 
     fun setCurrentTrack(track: Track) {
         currentTrack = track
@@ -131,7 +142,6 @@ class AudioPlayerViewModel(
                     startProgressUpdates()
                 }
             }
-
             else -> Unit
         }
     }
@@ -155,6 +165,26 @@ class AudioPlayerViewModel(
     private fun stopProgressUpdates() {
         progressJob?.cancel()
         progressJob = null
+    }
+
+    fun loadPlaylistsForBottomSheet() {
+        viewModelScope.launch {
+            playlistInteractor.getPlaylists().collect {
+                _playlistsForBottomSheet.postValue(it)
+            }
+        }
+    }
+
+    fun addToPlaylist(playlist: Playlist) {
+        val track = currentTrack ?: return
+        if (playlist.trackIds.contains(track.trackId)) {
+            _addToPlaylistStatus.postValue(AddStatus.AlreadyExists(playlist.name))
+        } else {
+            viewModelScope.launch {
+                playlistInteractor.addTrackToPlaylist(playlist, track)
+                _addToPlaylistStatus.postValue(AddStatus.Success(playlist.name))
+            }
+        }
     }
 
     override fun onCleared() {

@@ -1,7 +1,7 @@
 package com.example.playlistmaker.search.data
 
 import android.content.SharedPreferences
-import com.example.playlistmaker.library.data.db.AppDatabase
+import com.example.playlistmaker.library.data.db.dao.TrackDao
 import com.example.playlistmaker.search.domain.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.Track
 import com.google.gson.Gson
@@ -10,7 +10,7 @@ import org.koin.core.component.inject
 
 class SearchHistoryRepositoryImpl(
     private val sharedPreferences: SharedPreferences,
-    private val db: AppDatabase,
+    private val trackDao: TrackDao,
 ) : SearchHistoryRepository, KoinComponent {
 
     private val gson: Gson by inject()
@@ -34,7 +34,7 @@ class SearchHistoryRepositoryImpl(
     override suspend fun getHistory(): List<Track> {
         val json = sharedPreferences.getString(SEARCH_HISTORY_KEY, "[]")
         val tracks = gson.fromJson(json, Array<Track>::class.java).toList()
-        val favoriteIds = db.trackDao().getId()
+        val favoriteIds = trackDao.getId()
         tracks.forEach { track -> track.isFavorite = track.trackId in favoriteIds }
         return tracks
     }
