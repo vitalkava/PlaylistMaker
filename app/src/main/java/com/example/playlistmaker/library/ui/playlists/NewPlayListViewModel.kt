@@ -13,15 +13,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.UUID
 
-
-data class NewPlaylistState(
-    val name: String = "",
-    val description: String = "",
-    val coverUri: Uri? = null,
-    val isCreateEnabled: Boolean = false,
-    val hasChanges: Boolean = false
-)
-
 sealed class NewPlaylistEvent {
     data class Created(val name: String) : NewPlaylistEvent()
     object ShowConfirmDialog : NewPlaylistEvent()

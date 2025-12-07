@@ -177,7 +177,7 @@ val repositoryModule = module {
 
     single<PlaylistsRepository> {
         PlaylistRepositoryImpl(
-            get<AppDatabase>(),
+            get<AppDatabase>().playlistDao(),
             get<PlaylistDbConverter>()
         )
     }
