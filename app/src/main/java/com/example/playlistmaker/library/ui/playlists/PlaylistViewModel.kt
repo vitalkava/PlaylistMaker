@@ -47,4 +47,12 @@ class PlaylistViewModel(
             _playlistState.postValue(PlaylistState.Content(playlist, tracks))
         }
     }
+
+    fun deleteTrackFromPlaylist(track: Track) {
+        val current = (_playlistState.value as? PlaylistState.Content) ?: return
+        viewModelScope.launch {
+            playlistInteractor.removeTrackFromPlaylist(current.playlist.id, track.trackId)
+            loadPlaylist(current.playlist.id)
+        }
+    }
 }

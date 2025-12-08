@@ -48,4 +48,7 @@
     <string name="share">Падзяліцца</string>
     <string name="edit_information">Рэдагаваць інфармацыю</string>
     <string name="delete_playlist">Выдаліць плэйліст</string>
+    <string name="do_you_want_to_delete_the_track">Жадаеце выдалiць трэк?</string>
+    <string name="yes">ТАК</string>
+    <string name="no">НЕ</string>
 </resources>

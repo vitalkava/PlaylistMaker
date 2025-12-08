@@ -17,6 +17,7 @@
         <Button
             android:id="@+id/button_back"
             style="@style/ButtonBackStyle"
+            app:iconTint="@color/PM_black"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -123,54 +124,21 @@
             app:layout_constraintStart_toEndOf="@id/button_share"
             app:layout_constraintTop_toTopOf="@id/button_share" />
 
-        <LinearLayout
-            android:id="@+id/bottom_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/margin_16"
-            android:background="@drawable/bottom_sheet_bg"
-            android:orientation="vertical"
-            app:behavior_hideable="false"
-            app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/button_share">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/rectangle" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_tracks"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:orientation="vertical" />
-
-        </LinearLayout>
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <View
-        android:id="@+id/overlay"
+    <LinearLayout
+        android:id="@+id/bottom_sheet_tracks"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#99000000"
-        android:visibility="gone" />
-
-    <LinearLayout
-        android:id="@+id/bottom_sheet_menu"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:background="@drawable/bottom_sheet_bg"
         android:orientation="vertical"
-        app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="240dp"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/button_share">
 
         <ImageView
             android:layout_width="wrap_content"
@@ -179,58 +147,91 @@
             android:layout_marginTop="8dp"
             android:src="@drawable/rectangle" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_tracks"
             android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:layout_marginTop="@dimen/margin_12">
-
-            <com.google.android.material.imageview.ShapeableImageView
-                android:id="@+id/card"
-                android:layout_width="45dp"
-                android:layout_height="45dp"
-                android:layout_marginStart="13dp"
-                android:layout_marginTop="8dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/album_card_104"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:shapeAppearanceOverlay="@style/PlaylistSmallImageShape" />
-
-            <TextView
-                android:id="@+id/playlistName"
-                style="@style/PlaylistItemText"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="14dp"
-                android:textSize="@dimen/text_size_16"
-                app:layout_constraintStart_toEndOf="@+id/card"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:text="name" />
-
-            <TextView
-                android:id="@+id/countOfTracks"
-                style="@style/PlaylistItemText"
-                android:layout_marginTop="1dp"
-                android:textSize="11sp"
-                app:layout_constraintStart_toStartOf="@+id/playlistName"
-                app:layout_constraintTop_toBottomOf="@id/playlistName"
-                tools:text="100000000000" />
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <TextView
-            android:id="@+id/button_menu_share"
-            style="@style/button_menu_playlist"
-            android:text="@string/share" />
-
-        <TextView
-            android:id="@+id/button_menu_edit_information"
-            style="@style/button_menu_playlist"
-            android:text="@string/edit_information" />
-
-        <TextView
-            android:id="@+id/button_menu_delete"
-            style="@style/button_menu_playlist"
-            android:text="@string/delete_playlist" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical" />
 
     </LinearLayout>
+
+<!--    <View-->
+<!--        android:id="@+id/overlay"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:background="#99000000"-->
+<!--        android:visibility="gone" />-->
+
+<!--    <LinearLayout-->
+<!--        android:id="@+id/bottom_sheet_menu"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@drawable/bottom_sheet_bg"-->
+<!--        android:orientation="vertical"-->
+<!--        app:behavior_hideable="true"-->
+<!--        app:behavior_peekHeight="0dp"-->
+<!--        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">-->
+
+<!--        <ImageView-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="center"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:src="@drawable/rectangle" />-->
+
+<!--        <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="61dp"-->
+<!--            android:layout_marginTop="@dimen/margin_12">-->
+
+<!--            <com.google.android.material.imageview.ShapeableImageView-->
+<!--                android:id="@+id/card"-->
+<!--                android:layout_width="45dp"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:layout_marginStart="13dp"-->
+<!--                android:layout_marginTop="8dp"-->
+<!--                android:scaleType="centerCrop"-->
+<!--                android:src="@drawable/album_card_104"-->
+<!--                app:layout_constraintStart_toStartOf="parent"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                app:shapeAppearanceOverlay="@style/PlaylistSmallImageShape" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/playlistName"-->
+<!--                style="@style/PlaylistItemText"-->
+<!--                android:layout_marginStart="8dp"-->
+<!--                android:layout_marginTop="14dp"-->
+<!--                android:textSize="@dimen/text_size_16"-->
+<!--                app:layout_constraintStart_toEndOf="@+id/card"-->
+<!--                app:layout_constraintTop_toTopOf="parent"-->
+<!--                tools:text="name" />-->
+
+<!--            <TextView-->
+<!--                android:id="@+id/countOfTracks"-->
+<!--                style="@style/PlaylistItemText"-->
+<!--                android:layout_marginTop="1dp"-->
+<!--                android:textSize="11sp"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/playlistName"-->
+<!--                app:layout_constraintTop_toBottomOf="@id/playlistName"-->
+<!--                tools:text="100000000000" />-->
+<!--        </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/button_menu_share"-->
+<!--            style="@style/button_menu_playlist"-->
+<!--            android:text="@string/share" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/button_menu_edit_information"-->
+<!--            style="@style/button_menu_playlist"-->
+<!--            android:text="@string/edit_information" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/button_menu_delete"-->
+<!--            style="@style/button_menu_playlist"-->
+<!--            android:text="@string/delete_playlist" />-->
+
+<!--    </LinearLayout>-->
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

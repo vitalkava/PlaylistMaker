@@ -51,4 +51,7 @@
     <string name="share">Share</string>
     <string name="edit_information">Edit information</string>
     <string name="delete_playlist">Delete playlist</string>
+    <string name="do_you_want_to_delete_the_track">Do you want to delete the track?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
 </resources>
