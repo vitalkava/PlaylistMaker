@@ -4,7 +4,7 @@
     <string name="library">Медыятэка</string>
     <string name="settings">Наладкi</string>
     <string name="night_mode">Цёмная тэма</string>
-    <string name="share">Падзяліцца дадаткам</string>
+    <string name="share_the_app">Падзяліцца дадаткам</string>
     <string name="write_to_support">Напісаць у падтрымку</string>
     <string name="user_agreement">Карыстальніцкая дамова</string>
     <string name="title_share_screen_in_button_share_apk">Падзялiцца з дапамогай:</string>
@@ -45,4 +45,7 @@
     <string name="add_to_playlist">Дадаць у плэйліст</string>
     <string name="track_already_added">Трэк ужо дададзены ў плэйліст</string>
     <string name="added_to_playlist">Дададзена ў плэйліст</string>
+    <string name="share">Падзяліцца</string>
+    <string name="edit_information">Рэдагаваць інфармацыю</string>
+    <string name="delete_playlist">Выдаліць плэйліст</string>
 </resources>
