@@ -14,7 +14,7 @@ data class TrackEntity(
     val releaseDate: String?,
     val primaryGenreName: String,
     val country: String,
-    val trackTimeMillis: String,
+    val trackTimeMillis: Long,
     val previewUrl: String,
     val addedAt: Long = System.currentTimeMillis(),
 
