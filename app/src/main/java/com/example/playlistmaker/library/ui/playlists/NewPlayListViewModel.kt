@@ -59,12 +59,14 @@ class NewPlaylistViewModel(
         val current = _state.value ?: return
         if (current.isCreateEnabled) {
             val playlist = Playlist(
+                id = 0,
                 name = current.name,
                 description = current.description.takeIf { it.isNotBlank() },
                 coverUri = current.coverUri?.toString()
             )
             viewModelScope.launch {
-                interactor.createPlaylist(playlist)
+                val newId = interactor.createPlaylist(playlist)
+                val updated = playlist.copy(id = newId)
                 _event.postValue(NewPlaylistEvent.Created(current.name))
             }
         }

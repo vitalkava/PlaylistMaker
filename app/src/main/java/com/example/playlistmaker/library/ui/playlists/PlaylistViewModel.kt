@@ -19,7 +19,6 @@ sealed class PlaylistState {
 class PlaylistViewModel(
     private val playlistInteractor: PlaylistInteractor
 ) : ViewModel() {
-
     private val _playlistState = MutableLiveData<PlaylistState>()
     val playlistState: LiveData<PlaylistState> = _playlistState
 
@@ -28,22 +27,18 @@ class PlaylistViewModel(
             _playlistState.value = PlaylistState.Empty
             return
         }
-
         _playlistState.value = PlaylistState.Loading
-
         viewModelScope.launch {
             val playlist = playlistInteractor.getPlaylistById(playlistId)
             if (playlist == null) {
                 _playlistState.postValue(PlaylistState.Empty)
                 return@launch
             }
-
             val tracks = if (playlist.trackIds.isEmpty()) {
                 emptyList()
             } else {
                 playlistInteractor.getTracksByIds(playlist.trackIds).first()
             }
-
             _playlistState.postValue(PlaylistState.Content(playlist, tracks))
         }
     }
@@ -53,6 +48,13 @@ class PlaylistViewModel(
         viewModelScope.launch {
             playlistInteractor.removeTrackFromPlaylist(current.playlist.id, track.trackId)
             loadPlaylist(current.playlist.id)
+        }
+    }
+
+    fun deletePlaylist(id: Long, onComplete: () -> Unit) {
+        viewModelScope.launch {
+            playlistInteractor.deletePlaylist(id)
+            onComplete()
         }
     }
 }
