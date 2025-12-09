@@ -73,6 +73,7 @@ class PlaylistFragment : Fragment() {
                         binding.overlayMenu.visibility = View.VISIBLE
                         binding.overlayMenu.alpha = 1f
                     }
+
                     BottomSheetBehavior.STATE_HIDDEN -> {
                         binding.overlayMenu.alpha = 0f
                         binding.overlayMenu.visibility = View.GONE
@@ -87,7 +88,8 @@ class PlaylistFragment : Fragment() {
         bottomSheetMenuBehavior.addBottomSheetCallback(bottomSheetMenuCallback)
 
         binding.buttonMenu.setOnClickListener {
-            val state = viewModel.playlistState.value as? PlaylistState.Content ?: return@setOnClickListener
+            val state =
+                viewModel.playlistState.value as? PlaylistState.Content ?: return@setOnClickListener
             bindMenuInfo(state.playlist)
             bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
@@ -97,7 +99,22 @@ class PlaylistFragment : Fragment() {
             showDeletePlaylistDialog()
         }
 
-        // binding.buttonMenuEditInformation.setOnClickListener { } // be later
+        binding.buttonMenuEditInformation.setOnClickListener {
+            bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+            val state = viewModel
+                .playlistState.value as? PlaylistState.Content ?: return@setOnClickListener
+
+            val playlistJson = Gson().toJson(state.playlist)
+
+            val bundle = Bundle().apply {
+                putString("playlist_json", playlistJson)
+            }
+
+            findNavController().navigate(
+                R.id.action_playlistFragment_to_editPlaylistFragment,
+                bundle
+            )
+        }
 
         binding.buttonMenuShare.setOnClickListener {
             bottomSheetMenuBehavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -116,6 +133,7 @@ class PlaylistFragment : Fragment() {
                     trackAdapter.updateData(state.tracks.reversed())
                     updateBottomSheetVisibility(state.tracks.isNotEmpty())
                 }
+
                 is PlaylistState.Empty -> Unit
             }
         }
@@ -184,7 +202,8 @@ class PlaylistFragment : Fragment() {
             .setMessage(getString(R.string.do_you_want_to_delete_the_playlist))
             .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.dismiss() }
             .setPositiveButton(getString(R.string.yes)) { _, _ ->
-                val state = viewModel.playlistState.value as? PlaylistState.Content ?: return@setPositiveButton
+                val state = viewModel.playlistState.value as? PlaylistState.Content
+                    ?: return@setPositiveButton
                 viewModel.deletePlaylist(state.playlist.id) {
                     findNavController().navigateUp()
                 }
@@ -223,7 +242,8 @@ class PlaylistFragment : Fragment() {
             Toast.makeText(
                 requireContext(),
                 getString(R.string.playlist_does_not_have_a_track_list),
-                Toast.LENGTH_SHORT)
+                Toast.LENGTH_SHORT
+            )
                 .show()
         } else {
             sharePlaylist(state.playlist, state.tracks)
@@ -232,6 +252,5 @@ class PlaylistFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 }

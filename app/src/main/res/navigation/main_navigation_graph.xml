@@ -14,6 +14,17 @@
             android:id="@+id/action_searchFragment_to_audioPlayerFragment"
             app:destination="@id/audioPlayerFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/editPlaylistFragment"
+        android:name="com.example.playlistmaker.library.ui.playlists.EditPlaylistFragment"
+        android:label="Редактировать"
+        tools:layout="@layout/fragment_new_playlist" />
+
+    <action
+        android:id="@+id/action_playlistFragment_to_editPlaylistFragment"
+        app:destination="@id/editPlaylistFragment" />
+
     <fragment
         android:id="@+id/libraryFragment"
         android:name="com.example.playlistmaker.library.ui.LibraryFragment"

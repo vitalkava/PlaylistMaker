@@ -57,4 +57,7 @@
     <string name="do_you_want_to_delete_the_playlist">Do you want to delete the playlist?</string>
     <string name="share_the_playlist">Share the playlist</string>
     <string name="playlist_does_not_have_a_track_list">This playlist does not have a shareable track list</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="playlist_updated">Playlist "%s" is updated</string>
 </resources>

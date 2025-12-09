@@ -54,4 +54,7 @@
     <string name="do_you_want_to_delete_the_playlist">Вы хотите удалить плейлист?</string>
     <string name="share_the_playlist">Поделиться плейлистом</string>
     <string name="playlist_does_not_have_a_track_list">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="save">Сохранить</string>
+    <string name="edit">Редактировать</string>
+    <string name="playlist_updated">Плейлист "%s" обновлен</string>
 </resources>
