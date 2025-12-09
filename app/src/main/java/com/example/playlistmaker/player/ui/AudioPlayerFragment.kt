@@ -132,7 +132,7 @@ class AudioPlayerFragment : Fragment() {
                 is AddStatus.Success -> {
                     Toast.makeText(
                         requireContext(),
-                        "${getString(R.string.add_to_playlist)} ${status.playlistName}",
+                        "${getString(R.string.added_to_playlist)} ${status.playlistName}",
                         Toast.LENGTH_LONG
                     ).show()
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
