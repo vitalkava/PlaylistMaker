@@ -48,7 +48,7 @@ class EditPlaylistFragment : NewPlaylistFragment() {
                         getString(R.string.playlist_updated, event.name),
                         Toast.LENGTH_LONG
                     ).show()
-                    findNavController().popBackStack()
+                    findNavController().popBackStack(R.id.playlistFragment, false)
                 }
 
                 else -> findNavController().popBackStack()
