@@ -144,7 +144,6 @@ class AudioPlayerFragment : Fragment() {
                         "${getString(R.string.track_already_added)} ${status.playlistName}",
                         Toast.LENGTH_SHORT
                     ).show()
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                 }
             }
         }
