@@ -57,4 +57,5 @@
     <string name="save">Захаваць</string>
     <string name="edit">Рэдагаваць</string>
     <string name="playlist_updated">Плэйлiст "%s" абноўлены</string>
+    <string name="playlist_is_empty">У гэтым плэйлісце няма трэкаў</string>
 </resources>
