@@ -131,7 +131,15 @@ class PlaylistFragment : Fragment() {
                 is PlaylistState.Content -> {
                     bindPlaylist(state.playlist, state.tracks)
                     trackAdapter.updateData(state.tracks.reversed())
-                    updateBottomSheetVisibility(state.tracks.isNotEmpty())
+                    updateBottomSheetVisibility()
+
+                    if (state.tracks.isEmpty()) {
+                        binding.playlistIsEmpty.visibility = View.VISIBLE
+                        binding.rvTracks.visibility = View.GONE
+                    } else {
+                        binding.playlistIsEmpty.visibility = View.GONE
+                        binding.rvTracks.visibility = View.VISIBLE
+                    }
                 }
 
                 is PlaylistState.Empty -> Unit
@@ -178,12 +186,8 @@ class PlaylistFragment : Fragment() {
         )
     }
 
-    private fun updateBottomSheetVisibility(hasTracks: Boolean) {
-        bottomSheetBehavior.state = if (hasTracks) {
-            BottomSheetBehavior.STATE_COLLAPSED
-        } else {
-            BottomSheetBehavior.STATE_HIDDEN
-        }
+    private fun updateBottomSheetVisibility() {
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun showDeleteDialog(track: Track) {
