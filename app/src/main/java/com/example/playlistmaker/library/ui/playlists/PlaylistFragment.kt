@@ -130,7 +130,7 @@ class PlaylistFragment : Fragment() {
                 is PlaylistState.Loading -> Unit
                 is PlaylistState.Content -> {
                     bindPlaylist(state.playlist, state.tracks)
-                    trackAdapter.updateData(state.tracks.reversed())
+                    trackAdapter.updateData(state.tracks)
                     updateBottomSheetVisibility()
 
                     if (state.tracks.isEmpty()) {
