@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="tracks_count">
+        <item quantity="one">%d трэк</item>
+        <item quantity="few">%d трэка</item>
+        <item quantity="many">%d трэкаў</item>
+        <item quantity="other">%d трекаў</item>
+    </plurals>
+
+    <plurals name="minute_count">
+        <item quantity="one">%d мiнута</item>
+        <item quantity="few">%d мiнуты</item>
+        <item quantity="many">%d мiнут</item>
+        <item quantity="other">%d мiнут</item>
+    </plurals>
+</resources>

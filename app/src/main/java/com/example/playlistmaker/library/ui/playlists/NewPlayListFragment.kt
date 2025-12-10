@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -16,12 +15,12 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class NewPlaylistFragment : Fragment() {
+open class NewPlaylistFragment : Fragment() {
 
-    private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding get() = _binding!!
+    protected open val viewModel: NewPlaylistViewModel by viewModel()
 
-    private val viewModel: NewPlaylistViewModel by viewModel()
+    protected var _binding: FragmentNewPlaylistBinding? = null
+    protected val binding get() = _binding!!
 
     private val photoPicker =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -67,12 +66,25 @@ class NewPlaylistFragment : Fragment() {
         }
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
+
             binding.createButton.isEnabled = state.isCreateEnabled
-            if (state.coverUri != null) {
-                binding.addCover.setImageURI(state.coverUri)
+
+            val currentName = binding.addName.editText?.text?.toString()
+            if (currentName != state.name) {
+                binding.addName.editText?.setText(state.name)
+            }
+
+            val currentDescription = binding.addDescription.editText?.text?.toString()
+            if (currentDescription != state.description) {
+                binding.addDescription.editText?.setText(state.description)
+            }
+
+            state.coverUri?.let { uri ->
+                binding.addCover.setImageURI(uri)
                 binding.addCover.scaleType = ImageView.ScaleType.CENTER_CROP
             }
         }
+
 
         viewModel.event.observe(viewLifecycleOwner) { event ->
             when (event) {
@@ -86,24 +98,18 @@ class NewPlaylistFragment : Fragment() {
                 }
 
                 NewPlaylistEvent.ShowConfirmDialog -> showConfirmDialog()
-
                 NewPlaylistEvent.NavigateBack -> findNavController().popBackStack()
-
             }
         }
     }
 
     private fun showConfirmDialog() {
-        AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
-            .setTitle(requireContext().getString(R.string.complete_playlist_creation_question))
+        androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
+            .setTitle(R.string.complete_playlist_creation_question)
             .setMessage(R.string.all_unsaved_data_will_be_lost)
             .setPositiveButton(R.string.complete_answer) { _, _ -> findNavController().popBackStack() }
             .setNegativeButton(R.string.cancel_answer) { dialog, _ -> dialog.dismiss() }
             .show()
-    }
-
-    private fun navigateBack() {
-        requireActivity().onBackPressedDispatcher.onBackPressed()
     }
 
     override fun onDestroyView() {

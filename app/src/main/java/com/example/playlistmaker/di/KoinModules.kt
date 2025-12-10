@@ -18,7 +18,9 @@ import com.example.playlistmaker.library.domain.PlaylistTrackRepository
 import com.example.playlistmaker.library.domain.PlaylistsRepository
 import com.example.playlistmaker.library.ui.favorites.FavoritesViewModel
 import com.example.playlistmaker.library.ui.LibraryViewModel
+import com.example.playlistmaker.library.ui.playlists.EditPlaylistViewModel
 import com.example.playlistmaker.library.ui.playlists.NewPlaylistViewModel
+import com.example.playlistmaker.library.ui.playlists.PlaylistViewModel
 import com.example.playlistmaker.library.ui.playlists.PlaylistsViewModel
 import com.example.playlistmaker.player.data.MediaPlayerFactory
 import com.example.playlistmaker.player.data.MediaPlayerFactoryImpl
@@ -143,6 +145,8 @@ val viewModelModule = module {
     factory { (onTrackClicked: (Track) -> Unit) -> SearchAdapter(onTrackClicked) }
 
     viewModel { NewPlaylistViewModel(get(), get<PlaylistInteractor>()) }
+    viewModel { PlaylistViewModel(get()) }
+    viewModel { EditPlaylistViewModel(get(), get<PlaylistInteractor>()) }
 }
 
 val libraryModule = module {

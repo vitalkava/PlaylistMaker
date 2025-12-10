@@ -4,7 +4,7 @@
     <string name="library">Library</string>
     <string name="settings">Settings</string>
     <string name="night_mode">Night mode</string>
-    <string name="share">Share the app</string>
+    <string name="share_the_app">Share the app</string>
     <string name="write_to_support">Write to support</string>
     <string name="user_agreement">User Agreement</string>
     <string name="shared_text_in_button_share_apk" translatable="false">https://practicum.yandex.com/referrals/?ref_code=gAAAAABnbPrwIweaLt2TqMXmAy49d1WNBIm9ODIZnS5FQl6r0Sg-BF0xyYxKFZaGHsxb5RqDTzWzGcg17SP31WC0GNpQwjvzuw%3D%3D</string>
@@ -48,4 +48,17 @@
     <string name="add_to_playlist">Add to playlist</string>
     <string name="track_already_added">The track has already been added to the playlist</string>
     <string name="added_to_playlist">Added to playlist</string>
+    <string name="share">Share</string>
+    <string name="edit_information">Edit information</string>
+    <string name="delete_playlist">Delete playlist</string>
+    <string name="do_you_want_to_delete_the_track">Do you want to delete the track?</string>
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
+    <string name="do_you_want_to_delete_the_playlist">Do you want to delete the playlist?</string>
+    <string name="share_the_playlist">Share the playlist</string>
+    <string name="playlist_does_not_have_a_track_list">This playlist does not have a shareable track list</string>
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="playlist_updated">Playlist "%s" is updated</string>
+    <string name="playlist_is_empty">There are no tracks in this playlist</string>
 </resources>

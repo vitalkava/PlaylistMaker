@@ -3,6 +3,8 @@ package com.example.playlistmaker.library.data.converters
 import com.example.playlistmaker.library.data.db.entity.PlaylistTrackEntity
 import com.example.playlistmaker.library.data.db.entity.TrackEntity
 import com.example.playlistmaker.search.domain.Track
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TrackDbConverter {
 
@@ -16,7 +18,7 @@ class TrackDbConverter {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            trackTimeMillis = track.trackTime,
+            trackTimeMillis = track.trackTimeMillis,
             previewUrl = track.previewUrl ?: "",
         )
     }
@@ -31,7 +33,11 @@ class TrackDbConverter {
             releaseDate = track.releaseDate,
             primaryGenreName = track.primaryGenreName,
             country = track.country,
-            trackTime = track.trackTimeMillis,
+            trackTime = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(track.trackTimeMillis),
+            trackTimeMillis = track.trackTimeMillis,
             previewUrl = track.previewUrl.ifEmpty { null },
             isFavorite = true,
         )
@@ -42,7 +48,7 @@ class TrackDbConverter {
             trackId = track.trackId,
             trackName = track.trackName,
             artistName = track.artistName,
-            trackTimeMillis = track.trackTime,
+            trackTimeMillis = track.trackTimeMillis,
             artworkUrl100 = track.artworkUrl100,
             collectionName = track.collectionName,
             releaseDate = track.releaseDate,
@@ -57,13 +63,17 @@ class TrackDbConverter {
             trackId = entity.trackId,
             trackName = entity.trackName,
             artistName = entity.artistName,
-            trackTime = entity.trackTimeMillis,
+            trackTime = SimpleDateFormat(
+                "mm:ss",
+                Locale.getDefault()
+            ).format(entity.trackTimeMillis),
             artworkUrl100 = entity.artworkUrl100,
             collectionName = entity.collectionName,
             releaseDate = entity.releaseDate,
             primaryGenreName = entity.primaryGenreName,
             country = entity.country,
             previewUrl = entity.previewUrl,
+            trackTimeMillis = entity.trackTimeMillis,
             isFavorite = false
         )
     }

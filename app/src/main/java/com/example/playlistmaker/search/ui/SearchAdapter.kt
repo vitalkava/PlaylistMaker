@@ -9,13 +9,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.Track
 
-class SearchAdapter(private val onTrackClicked: (Track) -> Unit): RecyclerView.Adapter<SearchResultViewHolder> () {
+class SearchAdapter(
+    private val onTrackClicked: (Track) -> Unit
+) : RecyclerView.Adapter<SearchResultViewHolder>() {
+
+    private var onLongClick: ((Track) -> Unit)? = null
 
     private var tracks = ArrayList<Track>()
 
@@ -25,30 +28,34 @@ class SearchAdapter(private val onTrackClicked: (Track) -> Unit): RecyclerView.A
         notifyDataSetChanged()
     }
 
+    fun setOnLongClickListener(listener: (Track) -> Unit) {
+        onLongClick = listener
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.search_result_view, parent, false)
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.search_result_view, parent, false)
         return SearchResultViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: SearchResultViewHolder, position: Int) {
-
-        holder.bind(tracks[position])
-        holder.itemView.setOnClickListener {
-            onTrackClicked(tracks[position])
+        val track = tracks[position]
+        holder.bind(track)
+        holder.itemView.setOnClickListener { onTrackClicked(track) }
+        holder.itemView.setOnLongClickListener {
+            onLongClick?.invoke(track)
+            true
         }
     }
+
+    override fun getItemCount() = tracks.size
 
     init {
         setHasStableIds(true)
     }
-
-    override fun getItemCount(): Int {
-        return tracks.size
-    }
 }
 
-class SearchResultViewHolder(itemView: View): ViewHolder(itemView) {
-
+class SearchResultViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val albumImage: ImageView = itemView.findViewById(R.id.ivAlbumCard)
     private val trackName: TextView = itemView.findViewById(R.id.tvSongName)
     private val artistName: TextView = itemView.findViewById(R.id.tvBandName)
@@ -77,6 +84,7 @@ class SearchResultViewHolder(itemView: View): ViewHolder(itemView) {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,
-            context.resources.displayMetrics).toInt()
+            context.resources.displayMetrics
+        ).toInt()
     }
 }

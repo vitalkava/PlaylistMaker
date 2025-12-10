@@ -18,59 +18,63 @@ sealed class NewPlaylistEvent {
     object ShowConfirmDialog : NewPlaylistEvent()
     object NavigateBack : NewPlaylistEvent()
 }
-class NewPlaylistViewModel(
+
+open class NewPlaylistViewModel(
     application: Application,
     private val interactor: PlaylistInteractor
 ) : AndroidViewModel(application) {
 
-    private val _state = MutableLiveData(NewPlaylistState())
-    val state: LiveData<NewPlaylistState> = _state
-
-    private val _event = MutableLiveData<NewPlaylistEvent>()
+    protected val _state = MutableLiveData(NewPlaylistState())
+    open val state: LiveData<NewPlaylistState> = _state
+    protected val _event = MutableLiveData<NewPlaylistEvent>()
     val event: LiveData<NewPlaylistEvent> = _event
 
-    fun updateName(name: String) {
-        val newState = _state.value?.copy(
-            name = name.trim(),
-            isCreateEnabled = name.trim().isNotBlank(),
-            hasChanges = name.trim().isNotBlank() || _state.value?.description?.isNotBlank() == true || _state.value?.coverUri != null
+    open fun updateName(name: String) {
+        val trimmed = name.trim()
+        _state.value = _state.value?.copy(
+            name = trimmed,
+            isCreateEnabled = trimmed.isNotBlank(),
+            hasChanges = trimmed.isNotBlank() ||
+                    _state.value?.description?.isNotBlank() == true ||
+                    _state.value?.coverUri != null
         )
-        _state.value = newState
     }
 
-    fun updateDescription(description: String) {
-        val newState = _state.value?.copy(
-            description = description.trim(),
-            hasChanges = _state.value?.name?.isNotBlank() == true || description.trim().isNotBlank() || _state.value?.coverUri != null
+    open fun updateDescription(description: String) {
+        val trimmed = description.trim()
+        _state.value = _state.value?.copy(
+            description = trimmed,
+            hasChanges = _state.value?.name?.isNotBlank() == true ||
+                    trimmed.isNotBlank() ||
+                    _state.value?.coverUri != null
         )
-        _state.value = newState
     }
 
-    fun pickCover(uri: Uri) {
+    open fun pickCover(uri: Uri) {
         val savedUri = saveImageToInternalStorage(uri)
-        val newState = _state.value?.copy(
+        _state.value = _state.value?.copy(
             coverUri = savedUri,
             hasChanges = true
         )
-        _state.value = newState
     }
 
-    fun createPlaylist() {
+    open fun createPlaylist() {
         val current = _state.value ?: return
-        if (current.isCreateEnabled) {
-            val playlist = Playlist(
-                name = current.name,
-                description = current.description.takeIf { it.isNotBlank() },
-                coverUri = current.coverUri?.toString()
-            )
-            viewModelScope.launch {
-                interactor.createPlaylist(playlist)
-                _event.postValue(NewPlaylistEvent.Created(current.name))
-            }
+        if (!current.isCreateEnabled) return
+
+        val playlist = Playlist(
+            name = current.name,
+            description = current.description.takeIf { it.isNotBlank() },
+            coverUri = current.coverUri?.toString()
+        )
+
+        viewModelScope.launch {
+            val newId = interactor.createPlaylist(playlist)
+            _event.postValue(NewPlaylistEvent.Created(current.name))
         }
     }
 
-    fun handleBack() {
+    open fun handleBack() {
         if (_state.value?.hasChanges == true) {
             _event.postValue(NewPlaylistEvent.ShowConfirmDialog)
         } else {
@@ -78,9 +82,11 @@ class NewPlaylistViewModel(
         }
     }
 
-    private fun saveImageToInternalStorage(uri: Uri): Uri {
-        val file =
-            File(getApplication<Application>().filesDir, "playlist_cover_${UUID.randomUUID()}.jpg")
+    protected fun saveImageToInternalStorage(uri: Uri): Uri {
+        val file = File(
+            getApplication<Application>().filesDir,
+            "playlist_cover_${UUID.randomUUID()}.jpg"
+        )
         getApplication<Application>().contentResolver.openInputStream(uri)?.use { input ->
             FileOutputStream(file).use { output ->
                 input.copyTo(output)
